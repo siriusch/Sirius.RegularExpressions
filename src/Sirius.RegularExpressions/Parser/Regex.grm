@@ -37,6 +37,7 @@ RegexKleene      = '*'
 RegexRepeat      = '{' {Number}+ (',' {Number}*)? '}'
 RegexAny         = '+'
 RegexOptional    = '?'
+RegexDot         = '.'
 SensitiveGroup   = '(?-i:'
 InsensitiveGroup = '(?i:'
 
@@ -60,6 +61,8 @@ InsensitiveGroup = '(?i:'
                    |  RegexEscape
                    |  RegexCharset <RegexQuantifier>
                    |  RegexCharset
+                   |  RegexDot <RegexQuantifier>
+                   |  RegexDot
                    |  Charset <RegexQuantifier>
                    |  Charset
                    |  <RegexGroup> <RegexQuantifier>

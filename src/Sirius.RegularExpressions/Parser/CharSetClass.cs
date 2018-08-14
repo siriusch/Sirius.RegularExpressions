@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Sirius.RegularExpressions.Parser {
 	public enum CharSetClass {

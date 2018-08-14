@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using bsn.GoldParser.Semantic;
 
@@ -11,6 +11,7 @@ namespace Sirius.RegularExpressions.Parser {
 		[Rule("<RegexQuantified> ::= RegexLetter <RegexQuantifier>")]
 		[Rule("<RegexQuantified> ::= RegexEscape <RegexQuantifier>")]
 		[Rule("<RegexQuantified> ::= RegexCharset <RegexQuantifier>")]
+		[Rule("<RegexQuantified> ::= RegexDot <RegexQuantifier>")]
 		[Rule("<RegexQuantified> ::= <RegexGroup> <RegexQuantifier>")]
 		public static RegexExpression Create(RegexExpression inner, RegexQuantifier quantifier) {
 			if (quantifier.IsZero) {

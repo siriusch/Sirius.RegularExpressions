@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -138,6 +138,8 @@ namespace Sirius.RegularExpressions.RegularExpressions.Automata {
 		[InlineData(@"a*", false, "aa", true)]
 		[InlineData(@"a+", false, "aa", true)]
 		[InlineData(@"a|b", false, "aa", false)]
+		[InlineData(@"a.b", false, "a\nb", false)]
+		[InlineData(@"a.b", false, "a\rb", true)]
 		[InlineData(@"(a*|b*)+", false, "aabaabbabaa", true)]
 		[InlineData(@"(a+|b+)+", false, "aabaabbabaa", true)]
 		[InlineData(@"(a|b)+", false, "aabaabbabaa", true)]

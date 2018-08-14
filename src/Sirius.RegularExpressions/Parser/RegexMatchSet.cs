@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -21,6 +21,11 @@ namespace Sirius.RegularExpressions.Parser {
 
 		private static bool EqualsInternal(RegexMatchSet x, RegexMatchSet y) {
 			return Equals(x.Handle, y.Handle);
+		}
+
+		[Terminal("RegexDot")]
+		public static RegexMatchSet FromEscape() {
+			return new RegexMatchSet(".", new RangeSetHandle.Class(CharSetClass.Dot, false));
 		}
 
 		[Terminal("RegexEscape")]

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 
 using Sirius.RegularExpressions.Parser;
@@ -218,7 +218,7 @@ namespace Sirius.RegularExpressions.RegularExpressions.Parser {
 		[InlineData(@"\uFF00", true, "InHalfwidth_and_Fullwidth_Forms")]
 		[InlineData(@"\uFFEF", true, "InHalfwidth_and_Fullwidth_Forms")]
 		[InlineData(@"\uFFF0", true, "InSpecials")]
-		[InlineData(@"\uFFFF", true, "InSpecials")]
+		[InlineData(@"\uFFFD", true, "InSpecials")]
 		public void CharacterInSet(string ch, bool inSet, string unicodeName) {
 			Codepoint parsedChar;
 			if (ch.StartsWith("\\")) {
