@@ -1,0 +1,10 @@
+syntax: glob
+.vs/*
+*/bin/*
+*/obj/*
+*.suo
+*.user
+*.cache
+*.orig
+*.rej
+packages

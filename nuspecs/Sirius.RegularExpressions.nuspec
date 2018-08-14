@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package >
+	<metadata>
+		<id>Sirius.RegularExpressions</id>
+		<version>1.0.0</version>
+		<authors>siriusch</authors>
+		<owners>siriusch</owners>
+		<licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
+		<projectUrl>https://github.com/siriusch/Sirius.RegularExpressions</projectUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>.NET Library for generating NFA and DFA of arbitrary regular expressions</description>
+		<copyright>Copyright 2018 Sirius Technologies AG</copyright>
+		<tags>Sirius RegularExpressions</tags>
+		<dependencies>
+			<dependency id="Sirius.Common" version="1.0.0" />
+			<dependency id="bsn.GoldParser" version="2.0.79" />
+		</dependencies>
+	</metadata>
+	<files>
+		<file src="bin\$Configuration$\Sirius.RegularExpressions.dll" target="lib/net461"  />
+		<file src="bin\$Configuration$\Sirius.RegularExpressions.pdb" target="lib/net461" />
+		<!--file src="bin\$Configuration$\Sirius.RegularExpressions.xml" target="lib/net461" /-->
+	</files>
+</package>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3AC2CFB5-F6CB-46F5-8CEF-9A866062A04E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sirius.RegularExpressions</RootNamespace>
+    <AssemblyName>Sirius.RegularExpressions</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <KeyContainerName>SiriusKey</KeyContainerName>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="bsn.GoldParser, Version=2.0.79.0, Culture=neutral, PublicKeyToken=efd7d300630fec10, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\bsn.GoldParser.2.0.79\lib\bsn.GoldParser.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Sirius.Common, Version=1.0.2.0, Culture=neutral, PublicKeyToken=3d58c5c8efc41aa9, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Sirius.Common.1.0.2\lib\net461\Sirius.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Parser\Regex.grm" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Parser\Regex.egt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Alphabet\AlphabetBuilder.cs" />
+    <Compile Include="Alphabet\AlphabetBuilderVisitor.cs" />
+    <Compile Include="Alphabet\AlphabetLetter.cs" />
+    <Compile Include="Alphabet\AlphabetLetterVisitor.cs" />
+    <Compile Include="Alphabet\LetterRangeUser.cs" />
+    <Compile Include="Alphabet\UsedLetterRange.cs" />
+    <Compile Include="Alphabet\UsedRangeList.cs" />
+    <Compile Include="Automata\Dfa.cs" />
+    <Compile Include="Automata\DfaBuilder.cs" />
+    <Compile Include="Automata\DfaState.cs" />
+    <Compile Include="Automata\DfaStateBuilder.cs" />
+    <Compile Include="Automata\INonFiniteAutomaton.cs" />
+    <Compile Include="Automata\Nfa.cs" />
+    <Compile Include="Automata\NfaBuilder.cs" />
+    <Compile Include="Automata\NfaState.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Invariant\IRegexVisitor.cs" />
+    <Compile Include="Invariant\OptimizerVisitor.cs" />
+    <Compile Include="Invariant\RxAccept.cs" />
+    <Compile Include="Invariant\RxAlternation.cs" />
+    <Compile Include="Invariant\RxBinaryNode.cs" />
+    <Compile Include="Invariant\RxConcatenation.cs" />
+    <Compile Include="Invariant\RxEmpty.cs" />
+    <Compile Include="Invariant\RxExtensions.cs" />
+    <Compile Include="Invariant\RxMatch.cs" />
+    <Compile Include="Invariant\RxNode.cs" />
+    <Compile Include="Invariant\RxQuantified.cs" />
+    <Compile Include="LetterId.cs" />
+    <Compile Include="Lexer.cs" />
+    <Compile Include="LexerBuilder.cs" />
+    <Compile Include="Parser\CharSetClass.cs" />
+    <Compile Include="Parser\CharSetProviderBase.cs" />
+    <Compile Include="Parser\EcmaCharSetProvider.cs" />
+    <Compile Include="Parser\IAlphabetFor.cs" />
+    <Compile Include="Parser\IRangeSetProvider.cs" />
+    <Compile Include="Parser\IUnicodeMapper.cs" />
+    <Compile Include="Parser\RangeSetCategory.cs" />
+    <Compile Include="Parser\RangeSetHandle.cs" />
+    <Compile Include="Parser\RegexAccept.cs" />
+    <Compile Include="Parser\RegexAlternation.cs" />
+    <Compile Include="Parser\RegexCaseGroup.cs" />
+    <Compile Include="Parser\RegexConcatenation.cs" />
+    <Compile Include="Parser\RegexExpression.cs" />
+    <Compile Include="Parser\RegexMatchGrapheme.cs" />
+    <Compile Include="Parser\RegexMatchSet.cs" />
+    <Compile Include="Parser\RegexNoOp.cs" />
+    <Compile Include="Parser\RegexParser.cs" />
+    <Compile Include="Parser\RegexQuantified.cs" />
+    <Compile Include="Parser\RegexQuantifier.cs" />
+    <Compile Include="Parser\RegexToken.cs" />
+    <Compile Include="Parser\RxUtf8Visitor.cs" />
+    <Compile Include="Parser\UnicodeCharSetProvider.cs" />
+    <Compile Include="Parser\UnicodeCodepointMapper.cs" />
+    <Compile Include="Parser\UnicodeMapperBase.cs" />
+    <Compile Include="Parser\UnicodeUtf16Mapper.cs" />
+    <Compile Include="Parser\UnicodeUtf8Mapper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
