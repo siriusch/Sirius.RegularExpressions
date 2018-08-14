@@ -5,13 +5,12 @@ VisualStudioVersion = 15.0.27703.2000
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sirius.RegularExpressions", "src\Sirius.RegularExpressions\Sirius.RegularExpressions.csproj", "{3AC2CFB5-F6CB-46F5-8CEF-9A866062A04E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sirius.RegularExpressions.Test", "tests\Sirius.RegularExpressions.Tests\Sirius.RegularExpressions.Test.csproj", "{6060F664-C9CE-48BF-9817-7E7812356179}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sirius.RegularExpressions.Tests", "tests\Sirius.RegularExpressions.Tests\Sirius.RegularExpressions.Tests.csproj", "{6060F664-C9CE-48BF-9817-7E7812356179}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B3CCEF96-B5D3-4A76-89E1-B859CA592F00}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		README.md = README.md
-		nuspecs\Sirius.RegularExpressions.nuspec = nuspecs\Sirius.RegularExpressions.nuspec
 	EndProjectSection
 EndProject
 Global
@@ -27,7 +26,6 @@ Global
 		{6060F664-C9CE-48BF-9817-7E7812356179}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6060F664-C9CE-48BF-9817-7E7812356179}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6060F664-C9CE-48BF-9817-7E7812356179}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6060F664-C9CE-48BF-9817-7E7812356179}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
