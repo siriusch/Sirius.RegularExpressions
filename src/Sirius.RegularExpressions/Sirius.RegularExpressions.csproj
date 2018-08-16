@@ -64,6 +64,7 @@
     <Compile Include="Alphabet\AlphabetBuilderVisitor.cs" />
     <Compile Include="Alphabet\AlphabetLetter.cs" />
     <Compile Include="Alphabet\AlphabetLetterVisitor.cs" />
+    <Compile Include="Alphabet\AlphabetMapperEmitter.cs" />
     <Compile Include="Alphabet\LetterRangeUser.cs" />
     <Compile Include="Alphabet\UsedLetterRange.cs" />
     <Compile Include="Alphabet\UsedRangeList.cs" />
