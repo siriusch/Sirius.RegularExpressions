@@ -23,9 +23,13 @@ namespace Sirius.RegularExpressions.Parser {
 			return Equals(x.Handle, y.Handle);
 		}
 
+		public static RegexMatchSet FromClass(CharSetClass charSetClass) {
+			return new RegexMatchSet(".", new RangeSetHandle.Class(charSetClass, false));
+		}
+
 		[Terminal("RegexDot")]
-		public static RegexMatchSet FromEscape() {
-			return new RegexMatchSet(".", new RangeSetHandle.Class(CharSetClass.Dot, false));
+		public static RegexMatchSet Dot() {
+			return FromClass(CharSetClass.Dot);
 		}
 
 		[Terminal("RegexEscape")]
@@ -71,6 +75,10 @@ namespace Sirius.RegularExpressions.Parser {
 
 		public static RegexMatchSet FromChars(params char[] chars) {
 			return FromCodepoints(chars.ToCodepoints());
+		}
+
+		public static RegexMatchSet FromUnicode(string name, bool negate = false) {
+			return new RegexMatchSet($@"\{(negate ? 'P' : 'p')}{{{name}}}", new RangeSetHandle.Static(UnicodeRanges.FromUnicodeName(name), negate));
 		}
 
 		internal static RangeSetHandle ParseEscape(string escape) {

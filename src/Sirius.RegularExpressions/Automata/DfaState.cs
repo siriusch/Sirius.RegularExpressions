@@ -21,7 +21,7 @@ namespace Sirius.RegularExpressions.Automata {
 		}
 
 		public Id<DfaState<TLetter>> GetTransition(TLetter key) {
-			return GetTransition(key, Dfa<TLetter>.Reject);
+			return this.GetTransition(key, Dfa<TLetter>.Reject);
 		}
 
 		public Id<DfaState<TLetter>> GetTransition(TLetter key, Id<DfaState<TLetter>> defaultState) {

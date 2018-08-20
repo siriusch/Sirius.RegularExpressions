@@ -20,21 +20,21 @@ namespace Sirius.RegularExpressions.Automata {
 
 		public NfaBuilder(Func<RangeSet<TLetter>, RangeSet<TLetter>> negate) {
 			this.negate = negate;
-			this.startState = Create();
+			this.startState = this.Create();
 		}
 
 		NfaState<TLetter> IRegexVisitor<TLetter, NfaState<TLetter>, NfaState<TLetter>>.Accept(RxAccept<TLetter> node, NfaState<TLetter> context) {
-			var target = Create(node.Symbol);
+			var target = this.Create(node.Symbol);
 			node.Inner.Visit(this, context).AddEpsilonTransition(target);
 			return target;
 		}
 
 		NfaState<TLetter> IRegexVisitor<TLetter, NfaState<TLetter>, NfaState<TLetter>>.Alternation(RxAlternation<TLetter> node, NfaState<TLetter> context) {
-			var left = Create();
+			var left = this.Create();
 			context.AddEpsilonTransition(left);
-			var right = Create();
+			var right = this.Create();
 			context.AddEpsilonTransition(right);
-			var target = Create();
+			var target = this.Create();
 			node.Left.Visit(this, left).AddEpsilonTransition(target);
 			node.Right.Visit(this, right).AddEpsilonTransition(target);
 			return target;
@@ -49,7 +49,7 @@ namespace Sirius.RegularExpressions.Automata {
 		}
 
 		NfaState<TLetter> IRegexVisitor<TLetter, NfaState<TLetter>, NfaState<TLetter>>.Match(RxMatch<TLetter> node, NfaState<TLetter> context) {
-			var target = Create();
+			var target = this.Create();
 			var ranges = new RangeSet<TLetter>(node.Letters.Condense());
 			if (node.Negate) {
 				if (this.negate == null) {
@@ -76,9 +76,9 @@ namespace Sirius.RegularExpressions.Automata {
 				}
 			} else {
 				// kleene closure
-				var innerStart = Create();
+				var innerStart = this.Create();
 				context.AddEpsilonTransition(innerStart);
-				target = Create();
+				target = this.Create();
 				innerStart.AddEpsilonTransition(target);
 				var innerEnd = node.Inner.Visit(this, innerStart);
 				innerEnd.AddEpsilonTransition(innerStart);

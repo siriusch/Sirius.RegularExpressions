@@ -4,13 +4,16 @@ using System.Diagnostics;
 using System.Linq;
 
 using Sirius.Collections;
+using Sirius.RegularExprerssions.Parser;
+using Sirius.RegularExpressions;
+using Sirius.RegularExpressions.Alphabet;
 using Sirius.RegularExpressions.Parser;
 using Sirius.Unicode;
 
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Sirius.RegularExpressions.Alphabet {
+namespace Sirius.RegularExprerssions.Alphabet {
 	public class AlphabetBuilderTest {
 		private readonly ITestOutputHelper output;
 

@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 
 using Sirius.Collections;
 using Sirius.Unicode;
@@ -19,9 +18,9 @@ namespace Sirius.RegularExpressions.Parser {
 		public RangeSet<Codepoint> GetRangeSet(RangeSetCategory category, string data) {
 			switch (category) {
 			case RangeSetCategory.Name:
-				return GetNamedSet(data);
+				return this.GetNamedSet(data);
 			case RangeSetCategory.Class:
-				return GetClassSet((CharSetClass)Enum.Parse(typeof(CharSetClass), data, false));
+				return this.GetClassSet((CharSetClass)Enum.Parse(typeof(CharSetClass), data, false));
 			}
 			throw new ArgumentOutOfRangeException("category");
 		}

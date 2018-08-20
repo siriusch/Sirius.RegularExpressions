@@ -13,6 +13,8 @@ namespace Sirius.RegularExpressions.Parser {
 		private static readonly Lazy<RangeSet<Codepoint>> spaceCharSet = new Lazy<RangeSet<Codepoint>>(() => RangeSet<Codepoint>.Union(new RangeSet<Codepoint>("\r\n".ToCodepoints()), UnicodeRanges.FromUnicodeName("Separator")), LazyThreadSafetyMode.PublicationOnly);
 		private static readonly Lazy<RangeSet<Codepoint>> wordCharSet = new Lazy<RangeSet<Codepoint>>(() => RangeSet<Codepoint>.Union(new RangeSet<Codepoint>('_'), UnicodeRanges.FromUnicodeName("Letter"), UnicodeRanges.FromUnicodeCategory(UnicodeCategory.DecimalDigitNumber)), LazyThreadSafetyMode.PublicationOnly);
 
+		internal static RangeSet<Codepoint> SpaceCharSet => spaceCharSet.Value;
+
 		public UnicodeCharSetProvider(Func<string, RangeSet<Codepoint>> namedCharsets): base(namedCharsets) { }
 
 		public override RangeSet<Codepoint> GetClassSet(CharSetClass cls) {

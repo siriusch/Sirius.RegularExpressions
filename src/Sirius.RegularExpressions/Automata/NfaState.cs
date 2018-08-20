@@ -66,10 +66,10 @@ namespace Sirius.RegularExpressions.Automata {
 			if (ReferenceEquals(this, obj)) {
 				return true;
 			}
-			if (obj.GetType() != GetType()) {
+			if (obj.GetType() != this.GetType()) {
 				return false;
 			}
-			return Equals((NfaState<TLetter>)obj);
+			return this.Equals((NfaState<TLetter>)obj);
 		}
 
 		public override int GetHashCode() {

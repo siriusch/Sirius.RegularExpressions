@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using Sirius.Unicode;
 
 namespace Sirius.RegularExpressions {
 	public static class Extensions {

@@ -6,7 +6,7 @@ using Sirius.Unicode;
 
 using Xunit;
 
-namespace Sirius.RegularExpressions.RegularExpressions.Parser {
+namespace Sirius.RegularExprerssions.Parser {
 	public class UnicodeCharSetTest {
 		[Theory]
 		[InlineData(@"a", true, "L")]

@@ -21,7 +21,7 @@ namespace Sirius.RegularExpressions.Parser {
 			}
 
 			public override bool Equals(RangeSetHandle other) {
-				return InstanceEquals<Class>(other, EqualsInternal);
+				return this.InstanceEquals<Class>(other, EqualsInternal);
 			}
 
 			public override RangeSet<T> GetCharSet<T>(IRangeSetProvider<T> provider) {
@@ -49,7 +49,7 @@ namespace Sirius.RegularExpressions.Parser {
 			}
 
 			public override bool Equals(RangeSetHandle other) {
-				return InstanceEquals<Named>(other, EqualsInternal);
+				return this.InstanceEquals<Named>(other, EqualsInternal);
 			}
 
 			public override RangeSet<T> GetCharSet<T>(IRangeSetProvider<T> provider) {
@@ -77,7 +77,7 @@ namespace Sirius.RegularExpressions.Parser {
 			}
 
 			public override bool Equals(RangeSetHandle other) {
-				return InstanceEquals<Static>(other, (x, y) => x.Charset.Equals(y.Charset));
+				return this.InstanceEquals<Static>(other, (x, y) => x.Charset.Equals(y.Charset));
 			}
 
 			public override RangeSet<T> GetCharSet<T>(IRangeSetProvider<T> provider) {
@@ -114,7 +114,7 @@ namespace Sirius.RegularExpressions.Parser {
 			}
 
 			public override bool Equals(RangeSetHandle other) {
-				return InstanceEquals<Union>(other, (x, y) => x.handles.SetEqual(y.handles));
+				return this.InstanceEquals<Union>(other, (x, y) => x.handles.SetEqual(y.handles));
 			}
 
 			public override RangeSet<T> GetCharSet<T>(IRangeSetProvider<T> provider) {
@@ -175,7 +175,7 @@ namespace Sirius.RegularExpressions.Parser {
 		public abstract bool Equals(RangeSetHandle other);
 
 		public override bool Equals(object obj) {
-			return Equals(obj as RangeSetHandle);
+			return this.Equals(obj as RangeSetHandle);
 		}
 
 		public abstract RangeSet<T> GetCharSet<T>(IRangeSetProvider<T> provider)
@@ -183,7 +183,7 @@ namespace Sirius.RegularExpressions.Parser {
 
 		public override int GetHashCode() {
 			unchecked {
-				return GetType().GetHashCode()^(this.Negate.GetHashCode() * 397);
+				return this.GetType().GetHashCode()^(this.Negate.GetHashCode() * 397);
 			}
 		}
 

@@ -74,10 +74,13 @@
     <Compile Include="Automata\DfaBuilder.cs" />
     <Compile Include="Automata\DfaState.cs" />
     <Compile Include="Automata\DfaStateBuilder.cs" />
+    <Compile Include="Automata\DfaStateMachine.cs" />
+    <Compile Include="Automata\DfaStateMachineEmitter.cs" />
     <Compile Include="Automata\INonFiniteAutomaton.cs" />
     <Compile Include="Automata\Nfa.cs" />
     <Compile Include="Automata\NfaBuilder.cs" />
     <Compile Include="Automata\NfaState.cs" />
+    <Compile Include="CompiledLexer.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Invariant\IRegexVisitor.cs" />
     <Compile Include="Invariant\OptimizerVisitor.cs" />
@@ -92,6 +95,7 @@
     <Compile Include="Invariant\RxQuantified.cs" />
     <Compile Include="LetterId.cs" />
     <Compile Include="Lexer.cs" />
+    <Compile Include="LexerBase.cs" />
     <Compile Include="LexerBuilder.cs" />
     <Compile Include="Parser\CharSetClass.cs" />
     <Compile Include="Parser\CharSetProviderBase.cs" />
@@ -106,6 +110,7 @@
     <Compile Include="Parser\RegexCaseGroup.cs" />
     <Compile Include="Parser\RegexConcatenation.cs" />
     <Compile Include="Parser\RegexExpression.cs" />
+    <Compile Include="Parser\RegexLexer.cs" />
     <Compile Include="Parser\RegexMatchGrapheme.cs" />
     <Compile Include="Parser\RegexMatchSet.cs" />
     <Compile Include="Parser\RegexNoOp.cs" />

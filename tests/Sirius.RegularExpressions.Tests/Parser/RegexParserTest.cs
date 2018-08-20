@@ -7,7 +7,7 @@ using Sirius.Unicode;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Sirius.RegularExpressions.RegularExpressions.Parser {
+namespace Sirius.RegularExprerssions.Parser {
 	public class RegexParserTest {
 		private readonly ITestOutputHelper output;
 

@@ -67,7 +67,7 @@ namespace Sirius.RegularExpressions {
 
 		[Pure]
 		public int CompareTo(object other) {
-			return CompareTo((LetterId)other);
+			return this.CompareTo((LetterId)other);
 		}
 
 		[Pure]
@@ -82,7 +82,7 @@ namespace Sirius.RegularExpressions {
 
 		[Pure]
 		public override bool Equals(object other) {
-			return (other is LetterId) && Equals((LetterId)other);
+			return (other is LetterId) && this.Equals((LetterId)other);
 		}
 
 		[Pure]

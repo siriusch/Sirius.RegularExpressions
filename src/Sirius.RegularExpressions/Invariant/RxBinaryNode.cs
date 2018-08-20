@@ -17,7 +17,7 @@ namespace Sirius.RegularExpressions.Invariant {
 		}
 
 		public override int GetHashCode() {
-			return GetType().GetHashCode()^this.Left.GetHashCode()^(this.Right.GetHashCode() * 397);
+			return this.GetType().GetHashCode()^this.Left.GetHashCode()^(this.Right.GetHashCode() * 397);
 		}
 	}
 }

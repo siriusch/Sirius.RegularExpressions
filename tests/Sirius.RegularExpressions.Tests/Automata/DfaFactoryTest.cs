@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using Sirius.Collections;
+using Sirius.RegularExprerssions.Parser;
 using Sirius.RegularExpressions.Automata;
 using Sirius.RegularExpressions.Invariant;
 using Sirius.RegularExpressions.Parser;
@@ -12,7 +13,7 @@ using Sirius.Unicode;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Sirius.RegularExpressions.RegularExpressions.Automata {
+namespace Sirius.RegularExprerssions.Automata {
 	public class DfaFactoryTest {
 		private static void WriteDiagram<TLetter>(ITestOutputHelper output, Dfa<TLetter> dfa)
 				where TLetter: struct, IComparable<TLetter>, IEquatable<TLetter> {

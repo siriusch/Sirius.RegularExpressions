@@ -48,7 +48,7 @@ namespace Sirius.RegularExpressions.Automata {
 			if (ReferenceEquals(this, obj)) {
 				return true;
 			}
-			return Equals((DfaStateBuilder<TLetter>)obj);
+			return this.Equals((DfaStateBuilder<TLetter>)obj);
 		}
 
 		public override int GetHashCode() {

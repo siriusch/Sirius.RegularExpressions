@@ -12,11 +12,11 @@ namespace Sirius.RegularExpressions.Parser {
 		protected override RangeSet<Codepoint> ValidLetters => Codepoints.Valid;
 
 		protected override IEnumerable<Codepoint[]> GenerateCasedNormalizationLetterVariations(Grapheme grapheme, bool caseSensitive) {
-			return GenerateCasedNormalizationCodepointVariations(grapheme, caseSensitive);
+			return this.GenerateCasedNormalizationCodepointVariations(grapheme, caseSensitive);
 		}
 
 		public override RxNode<Codepoint> MapCodepoints(bool negate, RangeSet<Codepoint> codepointRanges, bool caseSensitive) {
-			return new RxMatch<Codepoint>(negate, ExpandCodepoints(codepointRanges, caseSensitive));
+			return new RxMatch<Codepoint>(negate, this.ExpandCodepoints(codepointRanges, caseSensitive));
 		}
 	}
 }

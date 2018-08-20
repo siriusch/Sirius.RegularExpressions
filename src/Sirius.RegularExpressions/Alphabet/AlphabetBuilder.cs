@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -74,6 +74,10 @@ namespace Sirius.RegularExpressions.Alphabet {
 
 		public RxNode<LetterId> Expression {
 			get;
+		}
+
+		public RangeSet<LetterId> Negate(RangeSet<LetterId> arg) {
+			return RangeSet<LetterId>.Subtract(new RangeSet<LetterId>(this.AlphabetById.Keys), arg);
 		}
 	}
 }

@@ -17,25 +17,25 @@ namespace Sirius.RegularExpressions.Invariant {
 			if (ReferenceEquals(other, this)) {
 				return true;
 			}
-			return (other.GetType() == GetType()) && EqualsInternal(other);
+			return (other.GetType() == this.GetType()) && this.EqualsInternal(other);
 		}
 
 		public abstract void ComputeLengths(out int min, out int? max);
 
 		public sealed override bool Equals(object other) {
-			return EqualsInternal(other as RxNode<TLetter>);
+			return this.EqualsInternal(other as RxNode<TLetter>);
 		}
 
 		protected abstract bool EqualsInternal(RxNode<TLetter> other);
 
 		public override int GetHashCode() {
-			throw new NotImplementedException(nameof(GetHashCode)+" must be implemented by overriding class");
+			throw new NotImplementedException(nameof(this.GetHashCode)+" must be implemented by overriding class");
 		}
 
 		public sealed override string ToString() {
 			using (var result = new StringWriter()) {
 				using (var writer = RichTextWriter.Wrap(result)) {
-					WriteTo(writer, this.PrecedenceLevel);
+					this.WriteTo(writer, this.PrecedenceLevel);
 				}
 				return result.ToString();
 			}
@@ -46,10 +46,10 @@ namespace Sirius.RegularExpressions.Invariant {
 		public void WriteTo(RichTextWriter writer, int currentPrecedenceLevel) {
 			if (currentPrecedenceLevel < this.PrecedenceLevel) {
 				writer.Write('(');
-				WriteToInternal(writer);
+				this.WriteToInternal(writer);
 				writer.Write(')');
 			} else {
-				WriteToInternal(writer);
+				this.WriteToInternal(writer);
 			}
 		}
 

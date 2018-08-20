@@ -18,7 +18,7 @@ namespace Sirius.RegularExpressions.Parser {
 			var compoundCodepoints = new HashSet<byte[]>(ArrayContentEqualityComparer<byte>.Default);
 			var codepoints = codepointRanges.Expand();
 			if (!caseSensitive) {
-				codepoints = codepoints.SelectMany(GenerateCaseInsensitiveCodepoints);
+				codepoints = codepoints.SelectMany(this.GenerateCaseInsensitiveCodepoints);
 			}
 			foreach (var letterCodepoints in codepoints.Select(c => c.ToUtf8Bytes())) {
 				Debug.Assert(letterCodepoints.Length > 0);
@@ -38,7 +38,7 @@ namespace Sirius.RegularExpressions.Parser {
 		}
 
 		protected override IEnumerable<byte[]> GenerateCasedNormalizationLetterVariations(Grapheme grapheme, bool caseSensitive) {
-			return GenerateCasedNormalizationCodepointVariations(grapheme, caseSensitive).Select(c => c.ToUtf8Bytes().ToArray());
+			return this.GenerateCasedNormalizationCodepointVariations(grapheme, caseSensitive).Select(c => c.ToUtf8Bytes().ToArray());
 		}
 	}
 }

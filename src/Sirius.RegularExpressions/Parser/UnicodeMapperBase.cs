@@ -39,7 +39,7 @@ namespace Sirius.RegularExpressions.Parser {
 		public RxNode<TLetter> MapGrapheme(Grapheme grapheme, bool caseSensitive) {
 			var singleCodepoints = new HashSet<TLetter>();
 			var compoundCodepoints = new HashSet<TLetter[]>(ArrayContentEqualityComparer<TLetter>.Default);
-			foreach (var letterCodepoints in GenerateCasedNormalizationLetterVariations(grapheme, caseSensitive)) {
+			foreach (var letterCodepoints in this.GenerateCasedNormalizationLetterVariations(grapheme, caseSensitive)) {
 				Debug.Assert(letterCodepoints.Length > 0);
 				if (letterCodepoints.Length == 1) {
 					singleCodepoints.Add(letterCodepoints[0]);
@@ -58,13 +58,13 @@ namespace Sirius.RegularExpressions.Parser {
 		}
 
 		public RangeSet<TLetter> Process(RangeSet<TLetter> letters, bool negate) {
-			return negate ? Negate(letters) : letters;
+			return negate ? this.Negate(letters) : letters;
 		}
 
 		protected IEnumerable<Codepoint> ExpandCodepoints(RangeSet<Codepoint> codepointRanges, bool caseSensitive) {
 			var codepoints = codepointRanges.Expand();
 			if (!caseSensitive) {
-				codepoints = codepoints.SelectMany(GenerateCaseInsensitiveCodepoints);
+				codepoints = codepoints.SelectMany(this.GenerateCaseInsensitiveCodepoints);
 			}
 			var enumerable = codepoints.Where(Codepoint.IsValid);
 			return enumerable;
@@ -72,8 +72,8 @@ namespace Sirius.RegularExpressions.Parser {
 
 		protected IEnumerable<Codepoint[]> GenerateCasedNormalizationCodepointVariations(Grapheme grapheme, bool caseSensitive) {
 			return caseSensitive
-					? GenerateNormalizationCodepointVariations(grapheme)
-					: Enumerable.Concat<Codepoint[]>(GenerateNormalizationCodepointVariations(grapheme.ToLowerInvariant()), GenerateNormalizationCodepointVariations(grapheme.ToUpperInvariant()));
+					? this.GenerateNormalizationCodepointVariations(grapheme)
+					: Enumerable.Concat<Codepoint[]>(this.GenerateNormalizationCodepointVariations(grapheme.ToLowerInvariant()), this.GenerateNormalizationCodepointVariations(grapheme.ToUpperInvariant()));
 		}
 
 		protected abstract IEnumerable<TLetter[]> GenerateCasedNormalizationLetterVariations(Grapheme grapheme, bool caseSensitive);
@@ -113,12 +113,12 @@ namespace Sirius.RegularExpressions.Parser {
 		}
 
 		private IEnumerable<Codepoint[]> GenerateNormalizationCodepointVariations(Grapheme grapheme) {
-			var result = GenerateCodepointVariations(grapheme.Normalize(NormalizationForm.FormC).ToArray())
-				.Concat(GenerateCodepointVariations(grapheme.Normalize(NormalizationForm.FormD).ToArray()));
+			var result = this.GenerateCodepointVariations(grapheme.Normalize(NormalizationForm.FormC).ToArray())
+				.Concat(this.GenerateCodepointVariations(grapheme.Normalize(NormalizationForm.FormD).ToArray()));
 			if (this.includeKForm) {
 				result = result
-					.Concat(GenerateCodepointVariations(grapheme.Normalize(NormalizationForm.FormKC).ToArray()))
-					.Concat(GenerateCodepointVariations(grapheme.Normalize(NormalizationForm.FormKD).ToArray()));
+					.Concat(this.GenerateCodepointVariations(grapheme.Normalize(NormalizationForm.FormKC).ToArray()))
+					.Concat(this.GenerateCodepointVariations(grapheme.Normalize(NormalizationForm.FormKD).ToArray()));
 			}
 			return result;
 		}

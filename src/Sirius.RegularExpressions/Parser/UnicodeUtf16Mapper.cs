@@ -13,7 +13,7 @@ namespace Sirius.RegularExpressions.Parser {
 		protected override RangeSet<char> ValidLetters => Utf16Chars.ValidFirstChar;
 
 		protected override IEnumerable<char[]> GenerateCasedNormalizationLetterVariations(Grapheme grapheme, bool caseSensitive) {
-			return GenerateCasedNormalizationCodepointVariations(grapheme, caseSensitive).Select(c => c.ToChars().ToArray());
+			return this.GenerateCasedNormalizationCodepointVariations(grapheme, caseSensitive).Select(c => c.ToChars().ToArray());
 		}
 
 		public override RxNode<char> MapCodepoints(bool negate, RangeSet<Codepoint> codepointRanges, bool caseSensitive) {
@@ -21,7 +21,7 @@ namespace Sirius.RegularExpressions.Parser {
 			var compoundCodepoints = new HashSet<char[]>(ArrayContentEqualityComparer<char>.Default);
 			var codepoints = codepointRanges.Expand();
 			if (!caseSensitive) {
-				codepoints = codepoints.SelectMany(GenerateCaseInsensitiveCodepoints);
+				codepoints = codepoints.SelectMany(this.GenerateCaseInsensitiveCodepoints);
 			}
 			foreach (var codepoint in codepoints) {
 				if (codepoint.FitsIntoChar) {
