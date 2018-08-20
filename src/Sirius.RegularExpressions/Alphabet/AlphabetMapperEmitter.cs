@@ -13,6 +13,7 @@ namespace Sirius.RegularExpressions.Alphabet {
 		private static readonly bool IsOperatorComparable = typeof(TLetter).IsPrimitive && (typeof(TLetter) != typeof(bool));
 		private static readonly MethodInfo IComparable_CompareTo = Reflect<IComparable<TLetter>>.GetMethod(i => i.CompareTo(default(TLetter)));
 		private static readonly MethodInfo IEquatable_Equals = Reflect<IEquatable<TLetter>>.GetMethod(i => i.Equals(default(TLetter)));
+		private static readonly ConstructorInfo LetterId_Ctor = Reflect.GetConstructor(() => new LetterId(default(int)));
 
 		private static Expression Body(Expression<Action> expression) {
 			return expression.Body;
@@ -32,9 +33,9 @@ namespace Sirius.RegularExpressions.Alphabet {
 			var ranges = builder.AlphabetById.SelectMany(p => p.Value.Select(r => new KeyValuePair<Range<TLetter>, LetterId>(r, p.Key))).Where(p => p.Value != defaultLetter).OrderBy(p => p.Key.From).ToList();
 			var paramValue = Expression.Parameter(typeof(TLetter), "value");
 			var defaultExpression = defaultLetter.HasValue
-					? (Expression)Expression.Constant(defaultLetter.Value)
-					: Expression.Throw(Body(() => new InvalidOperationException()), typeof(LetterId));
-			var body = BinaryCompare(ranges, 0, ranges.Count, paramValue, defaultExpression);
+					? (Expression)Expression.Constant(defaultLetter.Value.ToInt32())
+					: Expression.Throw(Body(() => new InvalidOperationException()), typeof(int));
+			var body = Expression.New(LetterId_Ctor, BinaryCompare(ranges, 0, ranges.Count, paramValue, defaultExpression));
 			return Expression.Lambda<Func<TLetter, LetterId>>(body, paramValue);
 		}
 
@@ -55,7 +56,7 @@ namespace Sirius.RegularExpressions.Alphabet {
 			}
 			var mid = (left + right) / 2;
 			var midRange = ranges[mid];
-			Expression result = Expression.Constant(midRange.Value);
+			Expression result = Expression.Constant(midRange.Value.ToInt32());
 			if ((mid != right-1) || !IsAdjacent(ranges, mid, mid+1)) {
 				result = Expression.Condition(
 						Compare(paramValue, Expression.GreaterThan, midRange.Key.To),
