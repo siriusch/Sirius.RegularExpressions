@@ -1,13 +1,12 @@
 using System;
 
 using Sirius.Collections;
-using Sirius.RegularExpressions.Parser;
 using Sirius.Unicode;
 
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Sirius.RegularExprerssions.Parser {
+namespace Sirius.RegularExpressions.Parser {
 	public class RegexParserTest {
 		private readonly ITestOutputHelper output;
 
@@ -39,7 +38,7 @@ namespace Sirius.RegularExprerssions.Parser {
 		[InlineData("[abc]")]
 		public void RegexParseRoundtrip(string rx) {
 			var expression = RegexParser.Parse(rx, null);
-			var invariant = expression.ToInvariant(new UnicodeCodepointMapper(false, false), new UnicodeCharSetProvider(null), true);
+			var invariant = expression.ToInvariant(new UnicodeCodepointMapper(false, false), new UnicodeCharSetProvider(), true);
 			Assert.Equal(rx, invariant.ToString());
 		}
 

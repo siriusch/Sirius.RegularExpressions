@@ -1,12 +1,11 @@
 using System;
 using System.Linq;
 
-using Sirius.RegularExpressions.Parser;
 using Sirius.Unicode;
 
 using Xunit;
 
-namespace Sirius.RegularExprerssions.Parser {
+namespace Sirius.RegularExpressions.Parser {
 	public class UnicodeCharSetTest {
 		[Theory]
 		[InlineData(@"a", true, "L")]

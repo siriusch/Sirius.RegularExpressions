@@ -7,16 +7,18 @@ using Sirius.Collections;
 using Sirius.RegularExpressions.Automata;
 
 namespace Sirius.RegularExpressions {
-	public abstract class LexerBase<TLetter> where TLetter: struct, IComparable<TLetter> {
+	public abstract class LexerBase<TInput, TLetter>
+			where TInput: struct, IComparable<TInput>
+			where TLetter: struct, IComparable<TLetter> {
 		private readonly bool handleEof;
-		private LinkedFifoBuffer<TLetter> buffer;
-		private LinkedFifoBuffer<TLetter>.BufferPosition bufferPosition;
 		private Id<DfaState<TLetter>> state;
-		private LinkedFifoBuffer<TLetter>.BufferPosition tokenEnd;
-		private LinkedFifoBuffer<TLetter>.BufferPosition tokenStart;
+		private LinkedFifoBuffer<TInput> buffer;
+		private LinkedFifoBuffer<TInput>.BufferPosition bufferPosition;
+		private LinkedFifoBuffer<TInput>.BufferPosition tokenEnd;
+		private LinkedFifoBuffer<TInput>.BufferPosition tokenStart;
 		private SymbolId? tokenSymbol;
 
-		protected LexerBase(Id<DfaState<TLetter>> startStateId, bool handleEof, SymbolId eof, Action<SymbolId, IEnumerable<TLetter>, long> tokenAction, params SymbolId[] symbolsToIgnore) {
+		protected LexerBase(Id<DfaState<TLetter>> startStateId, bool handleEof, SymbolId eof, Action<SymbolId, IEnumerable<TInput>, long> tokenAction, params SymbolId[] symbolsToIgnore) {
 			this.handleEof = handleEof;
 			this.StartStateId = startStateId;
 			this.Eof = eof;
@@ -38,13 +40,13 @@ namespace Sirius.RegularExpressions {
 			get;
 		}
 
-		protected Action<SymbolId, IEnumerable<TLetter>, long> TokenAction {
+		protected Action<SymbolId, IEnumerable<TInput>, long> TokenAction {
 			get;
 		}
 
 		private void AssertBuffer() {
 			if (this.buffer == null) {
-				this.buffer = new LinkedFifoBuffer<TLetter>();
+				this.buffer = new LinkedFifoBuffer<TInput>();
 				this.Reset(this.buffer.HeadPosition);
 			}
 		}
@@ -59,8 +61,8 @@ namespace Sirius.RegularExpressions {
 		}
 
 		private void ProcessData() {
-			TLetter value;
-			while (LinkedFifoBuffer<TLetter>.TryGetValue(ref this.bufferPosition, out value)) {
+			TInput value;
+			while (LinkedFifoBuffer<TInput>.TryGetValue(ref this.bufferPosition, out value)) {
 				var newState = this.state;
 				var newSymbol = this.ProcessStateMachine(ref newState, value);
 				if (Dfa<TLetter>.IsEndState(newState)) {
@@ -86,37 +88,45 @@ namespace Sirius.RegularExpressions {
 		}
 
 		protected virtual void ProcessEof() {
-			this.TokenAction(this.Eof, Enumerable.Empty<TLetter>(), this.bufferPosition.Offset);
+			this.TokenAction(this.Eof, Enumerable.Empty<TInput>(), this.bufferPosition.Offset-1);
 		}
 
-		protected abstract SymbolId? ProcessStateMachine(ref Id<DfaState<TLetter>> state, TLetter input);
+		protected abstract SymbolId? ProcessStateMachine(ref Id<DfaState<TLetter>> state, TInput input);
 
-		protected virtual void ProcessToken(SymbolId symbol, IEnumerable<TLetter> data, long offset, LinkedFifoBuffer<TLetter>.BufferPosition tokenEnd) {
+		protected virtual void ProcessToken(SymbolId symbol, IEnumerable<TInput> data, long offset, LinkedFifoBuffer<TInput>.BufferPosition tokenEnd) {
 			if (!this.SymbolsToIgnore.Contains(symbol)) {
 				this.TokenAction(symbol, data, offset);
 			}
 			this.Reset(tokenEnd);
 		}
 
-		public void Push(TLetter letter) {
+		public void Push(TInput letter) {
 			this.AssertBuffer();
-			LinkedFifoBuffer<TLetter>.Write(ref this.buffer, letter);
+			LinkedFifoBuffer<TInput>.Write(ref this.buffer, letter);
 			this.ProcessData();
 		}
 
-		public void Push(TLetter[] letters) {
+		public void Push(IEnumerable<TInput> letters) {
 			this.AssertBuffer();
-			LinkedFifoBuffer<TLetter>.Write(ref this.buffer, letters);
+			foreach (var letter in letters) {
+				LinkedFifoBuffer<TInput>.Write(ref this.buffer, letter);
+			}
 			this.ProcessData();
 		}
 
-		public void Push(TLetter[] letters, int index, int count) {
+		public void Push(TInput[] letters) {
 			this.AssertBuffer();
-			LinkedFifoBuffer<TLetter>.Write(ref this.buffer, letters, index, count);
+			LinkedFifoBuffer<TInput>.Write(ref this.buffer, letters);
 			this.ProcessData();
 		}
 
-		protected void Reset(LinkedFifoBuffer<TLetter>.BufferPosition bufferPosition) {
+		public void Push(TInput[] letters, int index, int count) {
+			this.AssertBuffer();
+			LinkedFifoBuffer<TInput>.Write(ref this.buffer, letters, index, count);
+			this.ProcessData();
+		}
+
+		protected void Reset(LinkedFifoBuffer<TInput>.BufferPosition bufferPosition) {
 			this.buffer = bufferPosition.Buffer;
 			this.tokenStart = this.tokenEnd = this.bufferPosition = bufferPosition;
 			this.tokenSymbol = null;

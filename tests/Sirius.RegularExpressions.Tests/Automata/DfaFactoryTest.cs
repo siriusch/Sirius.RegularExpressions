@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 
 using Sirius.Collections;
-using Sirius.RegularExprerssions.Parser;
-using Sirius.RegularExpressions.Automata;
 using Sirius.RegularExpressions.Invariant;
 using Sirius.RegularExpressions.Parser;
 using Sirius.Unicode;
@@ -13,7 +11,7 @@ using Sirius.Unicode;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Sirius.RegularExprerssions.Automata {
+namespace Sirius.RegularExpressions.Automata {
 	public class DfaFactoryTest {
 		private static void WriteDiagram<TLetter>(ITestOutputHelper output, Dfa<TLetter> dfa)
 				where TLetter: struct, IComparable<TLetter>, IEquatable<TLetter> {
@@ -49,7 +47,7 @@ namespace Sirius.RegularExprerssions.Automata {
 			var r2 = RegexParser.Parse(regexB, symbolB);
 			RegexExpression r = new RegexAlternation(r1, r2);
 			var mapper = new UnicodeCodepointMapper(false, false);
-			var rxCodepoint = r.ToInvariant(mapper, new UnicodeCharSetProvider(null), true);
+			var rxCodepoint = r.ToInvariant(mapper, new UnicodeCharSetProvider(), true);
 			var nfa = NfaBuilder<Codepoint>.Build(rxCodepoint.Optimize(), mapper.Negate);
 			NfaFactoryTest.WriteDiagram(this.output, nfa);
 			var dfa = DfaBuilder<Codepoint>.Build(nfa, Codepoints.EOF);
@@ -98,7 +96,7 @@ namespace Sirius.RegularExprerssions.Automata {
 		public void CreateCodepointDiagram(string regex, bool caseSensitive) {
 			var expression = RegexParser.Parse(regex, 0);
 			var mapper = new UnicodeCodepointMapper(false, false);
-			var rxCodepoint = expression.ToInvariant(mapper, new UnicodeCharSetProvider(null), caseSensitive);
+			var rxCodepoint = expression.ToInvariant(mapper, new UnicodeCharSetProvider(), caseSensitive);
 			var nfa = NfaBuilder<Codepoint>.Build(rxCodepoint.Optimize(), mapper.Negate);
 			var dfa = DfaBuilder<Codepoint>.Build(nfa, Codepoints.EOF);
 			NfaFactoryTest.WriteDiagram(this.output, nfa);
@@ -116,7 +114,7 @@ namespace Sirius.RegularExprerssions.Automata {
 		public void CreateUtf8Diagram(string regex, bool caseSensitive) {
 			var expression = RegexParser.Parse(regex, 0);
 			var mapper = new UnicodeUtf8Mapper(false, false);
-			var rxCodepoint = expression.ToInvariant(mapper, new UnicodeCharSetProvider(null), caseSensitive);
+			var rxCodepoint = expression.ToInvariant(mapper, new UnicodeCharSetProvider(), caseSensitive);
 			var nfa = NfaBuilder<byte>.Build(rxCodepoint.Optimize(), mapper.Negate);
 			var dfa = DfaBuilder<byte>.Build(nfa, 0xFF);
 			NfaFactoryTest.WriteDiagram(this.output, nfa);
@@ -160,7 +158,7 @@ namespace Sirius.RegularExprerssions.Automata {
 		public void MatchTest(string regex, bool caseSensitive, string input, bool match) {
 			var expression = RegexParser.Parse(regex, 0);
 			var mapper = new UnicodeCodepointMapper(false, false);
-			var rxCodepoint = expression.ToInvariant(mapper, new UnicodeCharSetProvider(null), caseSensitive);
+			var rxCodepoint = expression.ToInvariant(mapper, new UnicodeCharSetProvider(), caseSensitive);
 			var nfa = NfaBuilder<Codepoint>.Build(rxCodepoint.Optimize(), mapper.Negate);
 			var dfa = DfaBuilder<Codepoint>.Build(nfa, Codepoints.EOF);
 			var state = dfa.StartState;
@@ -189,7 +187,7 @@ namespace Sirius.RegularExprerssions.Automata {
 			this.output.WriteLine(Encoding.UTF8.GetString(input));
 			var expression = RegexParser.Parse(regex, 0);
 			var mapper = new UnicodeUtf8Mapper(false, false);
-			var rxCodepoint = expression.ToInvariant(mapper, new UnicodeCharSetProvider(null), caseSensitive);
+			var rxCodepoint = expression.ToInvariant(mapper, new UnicodeCharSetProvider(), caseSensitive);
 			var nfa = NfaBuilder<byte>.Build(rxCodepoint.Optimize(), mapper.Negate);
 			var dfa = DfaBuilder<byte>.Build(nfa, Utf8Bytes.EOF);
 			var state = dfa.StartState;

@@ -80,7 +80,6 @@
     <Compile Include="Automata\Nfa.cs" />
     <Compile Include="Automata\NfaBuilder.cs" />
     <Compile Include="Automata\NfaState.cs" />
-    <Compile Include="CompiledLexer.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Invariant\IRegexVisitor.cs" />
     <Compile Include="Invariant\OptimizerVisitor.cs" />

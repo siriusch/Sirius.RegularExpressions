@@ -15,7 +15,9 @@ namespace Sirius.RegularExpressions.Parser {
 
 		internal static RangeSet<Codepoint> SpaceCharSet => spaceCharSet.Value;
 
-		public UnicodeCharSetProvider(Func<string, RangeSet<Codepoint>> namedCharsets): base(namedCharsets) { }
+		public UnicodeCharSetProvider(IReadOnlyDictionary<string, RangeSet<Codepoint>> namedCharsets): this(namedCharsets.CreateGetterForIndexer()) { }
+
+		public UnicodeCharSetProvider(Func<string, RangeSet<Codepoint>> namedCharsets = null): base(namedCharsets) { }
 
 		public override RangeSet<Codepoint> GetClassSet(CharSetClass cls) {
 			switch (cls) {

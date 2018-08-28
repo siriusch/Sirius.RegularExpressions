@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -10,12 +10,12 @@ namespace Sirius.RegularExpressions {
 	public class LexerBuilder<TLetter>: IEnumerable<KeyValuePair<SymbolId, RxNode<TLetter>>> where TLetter: struct, IEquatable<TLetter>, IComparable<TLetter> {
 		private readonly TLetter? eof;
 		private readonly IUnicodeMapper<TLetter> mapper;
-		private readonly UnicodeCharSetProvider provider;
+		private readonly CharSetProviderBase provider;
 		private readonly Dictionary<SymbolId, RxNode<TLetter>> tokens = new Dictionary<SymbolId, RxNode<TLetter>>();
 
-		public LexerBuilder(IUnicodeMapper<TLetter> mapper, TLetter? eof, UnicodeCharSetProvider provider = null) {
+		public LexerBuilder(IUnicodeMapper<TLetter> mapper, TLetter? eof, CharSetProviderBase provider = null) {
 			this.eof = eof;
-			this.provider = provider ?? new UnicodeCharSetProvider(null);
+			this.provider = provider ?? new UnicodeCharSetProvider();
 			this.mapper = mapper;
 		}
 

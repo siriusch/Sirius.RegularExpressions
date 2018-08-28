@@ -4,16 +4,13 @@ using System.Diagnostics;
 using System.Linq;
 
 using Sirius.Collections;
-using Sirius.RegularExprerssions.Parser;
-using Sirius.RegularExpressions;
-using Sirius.RegularExpressions.Alphabet;
 using Sirius.RegularExpressions.Parser;
 using Sirius.Unicode;
 
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Sirius.RegularExprerssions.Alphabet {
+namespace Sirius.RegularExpressions.Alphabet {
 	public class AlphabetBuilderTest {
 		private readonly ITestOutputHelper output;
 
@@ -25,7 +22,7 @@ namespace Sirius.RegularExprerssions.Alphabet {
 				where TLetter: struct, IEquatable<TLetter>, IComparable<TLetter> {
 			this.output.WriteLine("Input regex (Case Sensitive: {0}, EOF letter: {1}):", caseSensitive, eof.HasValue);
 			this.output.WriteLine(pattern);
-			var provider = new UnicodeCharSetProvider(null);
+			var provider = new UnicodeCharSetProvider();
 			var regex = RegexParser.Parse(pattern, null).ToInvariant(mapper, provider, caseSensitive);
 			this.output.WriteLine("");
 			this.output.WriteLine("{0} regex:", typeof(TLetter).Name);

@@ -1,11 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 using Sirius.Collections;
-using Sirius.RegularExprerssions.Parser;
-using Sirius.RegularExpressions.Automata;
 using Sirius.RegularExpressions.Invariant;
 using Sirius.RegularExpressions.Parser;
 using Sirius.Unicode;
@@ -13,7 +11,7 @@ using Sirius.Unicode;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Sirius.RegularExprerssions.Automata {
+namespace Sirius.RegularExpressions.Automata {
 	public class NfaFactoryTest {
 		internal static void WriteDiagram<T>(ITestOutputHelper output, Nfa<T> builder)
 				where T: struct, IEquatable<T>, IComparable<T> {
@@ -62,7 +60,7 @@ namespace Sirius.RegularExprerssions.Automata {
 		public void CreateDiagram(string regex, bool caseSensitive) {
 			var expression = RegexParser.Parse(regex, 0);
 			var mapper = new UnicodeCodepointMapper(false, false);
-			var rxCodepoint = expression.ToInvariant(mapper, new UnicodeCharSetProvider(null), caseSensitive);
+			var rxCodepoint = expression.ToInvariant(mapper, new UnicodeCharSetProvider(), caseSensitive);
 			var rxAccept = new RxAccept<Codepoint>(rxCodepoint);
 			var nfa = NfaBuilder<Codepoint>.Build(rxAccept, mapper.Negate);
 			WriteDiagram(this.output, nfa);

@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading;
 
 using Sirius.Collections;
+using Sirius.RegularExpressions.Alphabet;
+using Sirius.RegularExpressions.Automata;
 using Sirius.Unicode;
 
 namespace Sirius.RegularExpressions.Parser {
-	internal static class RegexLexer {
-		public static readonly SymbolId SymNoise = 0;
+	public sealed class RegexLexer: Lexer<char, LetterId> {
+		internal static readonly SymbolId SymNoise = 0;
 		public static readonly SymbolId SymCharset = 1;
 		public static readonly SymbolId SymRegexLetter = 2;
 		public static readonly SymbolId SymRegexEscape = 3;
@@ -21,23 +25,45 @@ namespace Sirius.RegularExpressions.Parser {
 		public static readonly SymbolId SymBeginGroup = 12;
 		public static readonly SymbolId SymEndGroup = 13;
 
-		public static readonly IReadOnlyDictionary<string, RangeSet<Codepoint>> NamedSets = CreateNamedSets();
-		public static readonly RegexExpression TokenRegex = CreateTokenRegex();
+		public static readonly Func<SymbolId, string> SymbolNameResolver = new Dictionary<SymbolId, string>(17) {
+				{SymbolId.Accept, "(Accept)"},
+				{SymbolId.Reject, "(Reject)"},
+				{SymbolId.Eof, "(Eof)"},
+				{SymNoise, "(Noise)"},
+				{SymCharset, "Charset"},
+				{SymRegexLetter, "RegexLetter"},
+				{SymRegexEscape, "RegexEscape"},
+				{SymRegexCharset, "RegexCharset"},
+				{SymRegexKleene, "RegexKleene"},
+				{SymRegexRepeat, "RegexRepeat"},
+				{SymRegexAny, "RegexAny"},
+				{SymRegexOptional, "RegexOptional"},
+				{SymRegexDot, "RegexDot"},
+				{SymSensitiveGroup, "SensitiveGroup"},
+				{SymInsensitiveGroup, "InsensitiveGroup"},
+				{SymBeginGroup, "BeginGroup"},
+				{SymEndGroup, "EndGroup"}
+		}.CreateGetterForIndexer();
+
+		private static readonly Lazy<Func<Action<SymbolId, IEnumerable<char>, long>, RegexLexer>> factory = new Lazy<Func<Action<SymbolId, IEnumerable<char>, long>, RegexLexer>>(() => {
+			CreateStateMachine(out var stateMachine, out var startStateId);
+			return tokenAction => new RegexLexer(stateMachine.Compile(), new Id<DfaState<LetterId>>(startStateId), true, tokenAction, SymNoise);
+		}, LazyThreadSafetyMode.PublicationOnly);
 
 		private static IReadOnlyDictionary<string, RangeSet<Codepoint>> CreateNamedSets() {
 			var regexPrintable = RangeSet<Codepoint>.Subtract(Codepoints.ValidBmp, UnicodeCharSetProvider.SpaceCharSet);
 			return new Dictionary<string, RangeSet<Codepoint>>(StringComparer.Ordinal) {
-					{"RegexChar", RangeSet<Codepoint>.Subtract(regexPrintable, RangeSet<Codepoint>.Union(new RangeSet<Codepoint>(@"|/\{}()[].+?*".ToCodepoints()), UnicodeRanges.FromUnicodeName("InCombining_Diacritical_Marks"))) },
-					{"RegexCharset", RangeSet<Codepoint>.Subtract(regexPrintable, new RangeSet<Codepoint>(@"\]".ToCodepoints())) },
-					{"EscapePrintable", RangeSet<Codepoint>.Subtract(regexPrintable, new RangeSet<Codepoint>(@"PpxUu".ToCodepoints())) },
-					{"CharsetPrintable", RangeSet<Codepoint>.Subtract(regexPrintable, new RangeSet<Codepoint>(@"}".ToCodepoints())) },
-					{"HexChar", new RangeSet<Codepoint>(@"0123456789AaBbCcDdEeFf".ToCodepoints()) },
-					{"Digit", new RangeSet<Codepoint>(@"0123456789".ToCodepoints()) }
+					{"RegexChar", RangeSet<Codepoint>.Subtract(regexPrintable, RangeSet<Codepoint>.Union(new RangeSet<Codepoint>(@"|/\{}()[].+?*".ToCodepoints()), UnicodeRanges.FromUnicodeName("InCombining_Diacritical_Marks")))},
+					{"RegexCharset", RangeSet<Codepoint>.Subtract(regexPrintable, new RangeSet<Codepoint>(@"\]".ToCodepoints()))},
+					{"EscapePrintable", RangeSet<Codepoint>.Subtract(regexPrintable, new RangeSet<Codepoint>(@"PpxUu".ToCodepoints()))},
+					{"CharsetPrintable", RangeSet<Codepoint>.Subtract(regexPrintable, new RangeSet<Codepoint>(@"}".ToCodepoints()))},
+					{"HexChar", new RangeSet<Codepoint>(@"0123456789AaBbCcDdEeFf".ToCodepoints())},
+					{"Digit", new RangeSet<Codepoint>(@"0123456789".ToCodepoints())}
 			};
 		}
 
-		// To solve the chicken-egg problem of the Regex Parser, we specify the regex with the functional API instead of using the parser
 		private static RegexExpression CreateTokenRegex() {
+			// To solve the chicken-egg problem of the Regex Parser, we specify the regex with the functional API instead of using the parser
 			var rxCharset = RegexConcatenation.Create(
 					RegexMatchSet.FromChars('{'),
 					RegexMatchSet.FromUnicode("Letter"),
@@ -102,9 +128,9 @@ namespace Sirius.RegularExpressions.Parser {
 											RegexMatchSet.FromChars('^'),
 											RegexQuantifier.Optional()),
 									RegexQuantified.Create(
-										RegexAlternation.Create(
-												RegexMatchSet.FromNamedCharset("{RegexCharset}"),
-												rxEscape),
+											RegexAlternation.Create(
+													RegexMatchSet.FromNamedCharset("{RegexCharset}"),
+													rxEscape),
 											RegexQuantifier.Any()),
 									RegexMatchSet.FromChars(']')),
 							SymRegexCharset),
@@ -148,7 +174,7 @@ namespace Sirius.RegularExpressions.Parser {
 									RegexMatchSet.FromChars('-'),
 									RegexMatchSet.FromChars('i'),
 									RegexMatchSet.FromChars(':')
-									),
+							),
 							SymSensitiveGroup),
 					RegexAccept.Create(
 							RegexConcatenation.Create(
@@ -162,5 +188,24 @@ namespace Sirius.RegularExpressions.Parser {
 							RegexMatchSet.FromChars(')'),
 							SymEndGroup));
 		}
+
+		public static RegexLexer Create(Action<SymbolId, IEnumerable<char>, long> tokenAction) {
+			return factory.Value(tokenAction);
+		}
+
+		internal static void CreateStateMachine(out Expression<DfaStateMachine<LetterId, char>> stateMachine, out int startStateId) {
+			var mapper = new UnicodeUtf16Mapper(false, false);
+			var provider = new UnicodeCharSetProvider(CreateNamedSets());
+			var charRx = CreateTokenRegex().ToInvariant(mapper, provider, true);
+			var alpha = new AlphabetBuilder<char>(charRx, mapper.Negate, Utf16Chars.EOF, Utf16Chars.ValidBmp);
+			var charToLetter = AlphabetMapperEmitter<char>.CreateExpression(alpha);
+			var nfa = NfaBuilder<LetterId>.Build(alpha.Expression, alpha.Negate);
+			var dfa = DfaBuilder<LetterId>.Build(nfa, LetterId.Eof);
+			stateMachine = DfaStateMachineEmitter.CreateExpression(dfa, charToLetter);
+			startStateId = dfa.StartState.Id.ToInt32();
+		}
+
+		private RegexLexer(DfaStateMachine<LetterId, char> stateMachine, Id<DfaState<LetterId>> startStateId, bool handleEof, Action<SymbolId, IEnumerable<char>, long> tokenAction, params SymbolId[] symbolsToIgnore):
+				base(stateMachine, startStateId, handleEof, tokenAction, symbolsToIgnore) { }
 	}
 }
