@@ -10,7 +10,7 @@ namespace Sirius.RegularExpressions.Automata {
 		private static readonly ConstructorInfo ctor_LetterId = Reflect.GetConstructor(() => new LetterId(default(int)));
 		private static readonly ConstructorInfo ctor_SymbolId = Reflect.GetConstructor(() => new SymbolId(default(int)));
 		private static readonly ConstructorInfo ctor_NullableSymbolId = Reflect.GetConstructor(() => new SymbolId?(default(SymbolId)));
-		private static readonly Expression new_InvalidOperationException = Reflect.AsExpression(() => new InvalidOperationException());
+		private static readonly Expression new_InvalidOperationException = Expression.New(Reflect.GetConstructor(() => new InvalidOperationException()));
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static bool LetterComparison<TLetter>(TLetter x, TLetter y)

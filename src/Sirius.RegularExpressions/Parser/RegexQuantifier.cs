@@ -1,20 +1,17 @@
-﻿using System;
+using System;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 
-using bsn.GoldParser.Semantic;
-
 using Sirius.Collections;
 
 namespace Sirius.RegularExpressions.Parser {
-	public sealed class RegexQuantifier: RegexToken, IEquatable<RegexQuantifier> {
+	public sealed class RegexQuantifier: IEquatable<RegexQuantifier> {
 		private static readonly Regex rxQuantifier = new Regex(@"^\{(?<min>[0-9]+)(?<upper>,(?<max>[0-9]+)?)?\}$", RegexOptions.Compiled|RegexOptions.CultureInvariant|RegexOptions.ExplicitCapture);
 		private static readonly RegexQuantifier any = new RegexQuantifier(1, default(int?));
 		private static readonly RegexQuantifier kleene = new RegexQuantifier(0, default(int?));
 		private static readonly RegexQuantifier optional = new RegexQuantifier(0, 1);
 
-		[Terminal("RegexAny")]
 		public static RegexQuantifier Any() {
 			return any;
 		}
@@ -23,17 +20,14 @@ namespace Sirius.RegularExpressions.Parser {
 			return (x.Min == y.Min) && (x.Max == y.Max);
 		}
 
-		[Terminal("RegexKleene")]
 		public static RegexQuantifier Kleene() {
 			return kleene;
 		}
 
-		[Terminal("RegexOptional")]
 		public static RegexQuantifier Optional() {
 			return optional;
 		}
 
-		[Terminal("RegexRepeat")]
 		public static RegexQuantifier Repeat(string quantifier) {
 			var match = rxQuantifier.Match(quantifier);
 			var min = XmlConvert.ToInt32(match.Groups["min"].Value);

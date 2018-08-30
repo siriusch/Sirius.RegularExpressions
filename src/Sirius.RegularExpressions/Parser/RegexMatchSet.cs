@@ -4,8 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-using bsn.GoldParser.Semantic;
-
 using Sirius.Collections;
 using Sirius.RegularExpressions.Invariant;
 using Sirius.Unicode;
@@ -27,17 +25,14 @@ namespace Sirius.RegularExpressions.Parser {
 			return new RegexMatchSet(".", new RangeSetHandle.Class(charSetClass, false));
 		}
 
-		[Terminal("RegexDot")]
 		public static RegexMatchSet Dot() {
 			return FromClass(CharSetClass.Dot);
 		}
 
-		[Terminal("RegexEscape")]
 		public static RegexMatchSet FromEscape(string escape) {
 			return new RegexMatchSet(escape, ParseEscape(escape));
 		}
 
-		[Terminal("Charset")]
 		public static RegexMatchSet FromNamedCharset(string charset) {
 			var match = rxNamed.Match(charset);
 			if (!match.Success) {
@@ -46,7 +41,6 @@ namespace Sirius.RegularExpressions.Parser {
 			return new RegexMatchSet(charset, new RangeSetHandle.Named(match.Groups["name"].Value, false));
 		}
 
-		[Terminal("RegexCharset")]
 		public static RegexMatchSet FromSet(string set) {
 			var match = rxSet.Match(set);
 			if (!match.Success) {

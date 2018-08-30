@@ -94,7 +94,7 @@ namespace Sirius.RegularExpressions.Automata {
 		[InlineData(@"this is a more complicated regex|anything that matters|[0-9]+|[a-z\x20]+", false)]
 		[InlineData(@"\[(^)?((\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^PpuxDdWwSs])|[^\\\]])-(\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^PpuxDdWwSs])|[^\\\]])|(\\([Pp](\p{L}|\{[^\}]+\})|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^Ppux])|[^\\\]]))*\]", false)]
 		public void CreateCodepointDiagram(string regex, bool caseSensitive) {
-			var expression = RegexParser.Parse(regex, 0);
+			var expression = RegexParser.Parse(regex, 0, false);
 			var mapper = new UnicodeCodepointMapper(false, false);
 			var rxCodepoint = expression.ToInvariant(mapper, new UnicodeCharSetProvider(), caseSensitive);
 			var nfa = NfaBuilder<Codepoint>.Build(rxCodepoint.Optimize(), mapper.Negate);

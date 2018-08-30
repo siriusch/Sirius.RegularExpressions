@@ -1,16 +1,12 @@
-﻿using bsn.GoldParser.Semantic;
-
 using Sirius.RegularExpressions.Invariant;
 using Sirius.Unicode;
 
 namespace Sirius.RegularExpressions.Parser {
 	public class RegexCaseGroup: RegexExpression {
-		[Rule("<RegexGroup> ::= ~SensitiveGroup <RegexExpression> ~')'")]
 		public static RegexCaseGroup CaseSensitve(RegexExpression inner) {
 			return new RegexCaseGroup(inner, true);
 		}
 
-		[Rule("<RegexGroup> ::= ~InsensitiveGroup <RegexExpression> ~')'")]
 		public static RegexCaseGroup CaseInsensitve(RegexExpression inner) {
 			return new RegexCaseGroup(inner, false);
 		}

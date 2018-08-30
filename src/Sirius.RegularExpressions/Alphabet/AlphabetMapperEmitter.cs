@@ -12,12 +12,7 @@ namespace Sirius.RegularExpressions.Alphabet {
 			where TLetter: struct, IComparable<TLetter>, IEquatable<TLetter> {
 		private static readonly bool IsOperatorComparable = typeof(TLetter).IsPrimitive && (typeof(TLetter) != typeof(bool));
 		private static readonly MethodInfo IComparable_CompareTo = Reflect<IComparable<TLetter>>.GetMethod(i => i.CompareTo(default(TLetter)));
-		private static readonly MethodInfo IEquatable_Equals = Reflect<IEquatable<TLetter>>.GetMethod(i => i.Equals(default(TLetter)));
 		private static readonly ConstructorInfo LetterId_Ctor = Reflect.GetConstructor(() => new LetterId(default(int)));
-
-		private static Expression Body(Expression<Action> expression) {
-			return expression.Body;
-		}
 
 		private static Expression Compare(ParameterExpression value, Func<Expression, Expression, Expression> op, TLetter rangeLimit) {
 			return IsOperatorComparable
@@ -34,7 +29,9 @@ namespace Sirius.RegularExpressions.Alphabet {
 			var paramValue = Expression.Parameter(typeof(TLetter), "value");
 			var defaultExpression = defaultLetter.HasValue
 					? (Expression)Expression.Constant(defaultLetter.Value.ToInt32())
-					: Expression.Throw(Body(() => new InvalidOperationException()), typeof(int));
+					: Expression.Throw(
+							Expression.New(
+									Reflect.GetConstructor(() => new InvalidOperationException())), typeof(int));
 			var body = Expression.New(LetterId_Ctor, BinaryCompare(ranges, 0, ranges.Count, paramValue, defaultExpression));
 			return Expression.Lambda<Func<TLetter, LetterId>>(body, paramValue);
 		}

@@ -1,18 +1,10 @@
 using System;
 
-using bsn.GoldParser.Semantic;
-
 using Sirius.RegularExpressions.Invariant;
 using Sirius.Unicode;
 
 namespace Sirius.RegularExpressions.Parser {
 	public class RegexQuantified: RegexExpression {
-		[Rule("<RegexQuantified> ::= Charset <RegexQuantifier>")]
-		[Rule("<RegexQuantified> ::= RegexLetter <RegexQuantifier>")]
-		[Rule("<RegexQuantified> ::= RegexEscape <RegexQuantifier>")]
-		[Rule("<RegexQuantified> ::= RegexCharset <RegexQuantifier>")]
-		[Rule("<RegexQuantified> ::= RegexDot <RegexQuantifier>")]
-		[Rule("<RegexQuantified> ::= <RegexGroup> <RegexQuantifier>")]
 		public static RegexExpression Create(RegexExpression inner, RegexQuantifier quantifier) {
 			if (quantifier.IsZero) {
 				return RegexNoOp.Default;

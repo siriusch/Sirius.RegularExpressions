@@ -1,13 +1,17 @@
-﻿using System;
-
-using bsn.GoldParser.Semantic;
+using System;
 
 using Sirius.RegularExpressions.Invariant;
 using Sirius.Unicode;
 
 namespace Sirius.RegularExpressions.Parser {
 	public class RegexMatchGrapheme: RegexExpression {
-		[Terminal("RegexLetter")]
+		public static RegexExpression Create(string text) {
+			if (string.IsNullOrEmpty(text)) {
+				return RegexNoOp.Default;
+			}
+			return new RegexMatchGrapheme(text);
+		}
+
 		public RegexMatchGrapheme(string text) {
 			this.Text = new Grapheme(text);
 		}

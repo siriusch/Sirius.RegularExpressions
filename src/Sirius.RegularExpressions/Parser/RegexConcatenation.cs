@@ -1,7 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-
-using bsn.GoldParser.Semantic;
 
 using Sirius.RegularExpressions.Invariant;
 using Sirius.Unicode;
@@ -25,7 +23,6 @@ namespace Sirius.RegularExpressions.Parser {
 			}
 		}
 
-		[Rule("<RegexConcatenation> ::= <RegexQuantified> <RegexConcatenation>")]
 		public static RegexExpression Create(RegexExpression left, RegexExpression right) {
 			if (right is RegexNoOp) {
 				return left;
