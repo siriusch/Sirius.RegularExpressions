@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -37,8 +37,8 @@ namespace Sirius.RegularExpressions.Automata {
 					}));
 				}
 				var groupedNfaTransitions = new RangeDictionary<TLetter, HashSet<NfaState<TLetter>>>(allNfaTransitions
-						.Select(p => new KeyValuePair<Range<TLetter>, HashSet<NfaState<TLetter>>>(p.Key, new HashSet<NfaState<TLetter>>(p.Value))),
-					SetEqualityComparer<NfaState<TLetter>>.Default);
+								.Select(p => new KeyValuePair<Range<TLetter>, HashSet<NfaState<TLetter>>>(p.Key, new HashSet<NfaState<TLetter>>(p.Value))),
+						SetEqualityComparer<NfaState<TLetter>>.Default);
 				foreach (var matchTarget in groupedNfaTransitions) {
 					DfaStateBuilder<TLetter> targetDfaState;
 					if (GetStateBuilder(dfaStates, firstId, matchTarget.Value.SelectMany(t => closures[t.Id]), out targetDfaState)) {
@@ -50,11 +50,11 @@ namespace Sirius.RegularExpressions.Automata {
 			// Step 3: identify and remove identical (same transitions) states
 			while (true) {
 				var dupes = dfaStates
-					.Values
-					.GroupBy(s => s)
-					.Select(g => new KeyValuePair<DfaStateBuilder<TLetter>, ICollection<DfaStateBuilder<TLetter>>>(g.Key, g.Where(s => !ReferenceEquals(s, g.Key)).ToList()))
-					.Where(p => p.Value.Count > 1)
-					.ToDictionary();
+						.Values
+						.GroupBy(s => s)
+						.Select(g => new KeyValuePair<DfaStateBuilder<TLetter>, ICollection<DfaStateBuilder<TLetter>>>(g.Key, g.Where(s => !ReferenceEquals(s, g.Key)).ToList()))
+						.Where(p => p.Value.Count > 1)
+						.ToDictionary();
 				if (dupes.Count == 0) {
 					break;
 				}
@@ -82,12 +82,15 @@ namespace Sirius.RegularExpressions.Automata {
 						pending.Enqueue(transition.Value);
 					}
 					var acceptSymbolIds = builder
-						.NfaStates
-						.Select(s => s.AcceptId)
-						.Where(a => a.HasValue)
-						.Select(a => a.Value)
-						.Distinct()
-						.ToList();
+							.NfaStates
+							.Where(s => s.AcceptId.HasValue)
+							// ReSharper disable once PossibleInvalidOperationException
+							.GroupBy(a => a.Precedence, a => a.AcceptId.Value)
+							.OrderByDescending(g => g.Key)
+							.Take(1)
+							.SelectMany(g => g)
+							.Distinct()
+							.ToList();
 					switch (acceptSymbolIds.Count) {
 					case 0:
 						break;
@@ -98,7 +101,7 @@ namespace Sirius.RegularExpressions.Automata {
 						}
 						break;
 					default:
-						throw new InvalidOperationException("The state "+state.Id+" has multiple accept states "+string.Join(",", acceptSymbolIds));
+						throw new InvalidOperationException("The state " + state.Id + " has multiple same-precedence accept states " + string.Join(",", acceptSymbolIds));
 					}
 				}
 			} while (pending.Count > 0);
@@ -120,7 +123,7 @@ namespace Sirius.RegularExpressions.Automata {
 				key = "EOF";
 			}
 			if (!dfaStates.TryGetValue(key, out builder)) {
-				builder = new DfaStateBuilder<TLetter>(dfaStates.Count+firstId.ToInt32(), key, stateArray);
+				builder = new DfaStateBuilder<TLetter>(dfaStates.Count + firstId.ToInt32(), key, stateArray);
 				dfaStates.Add(key, builder);
 				return true;
 			}

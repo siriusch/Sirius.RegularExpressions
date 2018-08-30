@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.IO;
 
-using bsn.GoldParser.Text;
+using Sirius.Text;
 
 namespace Sirius.RegularExpressions.Invariant {
 	public abstract class RxNode<TLetter>: IEquatable<RxNode<TLetter>>
 			where TLetter: IEquatable<TLetter> {
-		internal abstract int PrecedenceLevel {
+		internal abstract int EvaluationPrecedence {
 			get;
 		}
 
@@ -35,7 +35,7 @@ namespace Sirius.RegularExpressions.Invariant {
 		public sealed override string ToString() {
 			using (var result = new StringWriter()) {
 				using (var writer = RichTextWriter.Wrap(result)) {
-					this.WriteTo(writer, this.PrecedenceLevel);
+					this.WriteTo(writer, this.EvaluationPrecedence);
 				}
 				return result.ToString();
 			}
@@ -44,7 +44,7 @@ namespace Sirius.RegularExpressions.Invariant {
 		public abstract TResult Visit<TContext, TResult>(IRegexVisitor<TLetter, TContext, TResult> visitor, TContext context);
 
 		public void WriteTo(RichTextWriter writer, int currentPrecedenceLevel) {
-			if (currentPrecedenceLevel < this.PrecedenceLevel) {
+			if (currentPrecedenceLevel < this.EvaluationPrecedence) {
 				writer.Write('(');
 				this.WriteToInternal(writer);
 				writer.Write(')');

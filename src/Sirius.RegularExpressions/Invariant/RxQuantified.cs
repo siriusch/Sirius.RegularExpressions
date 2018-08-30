@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-using bsn.GoldParser.Text;
+using Sirius.Text;
 
 namespace Sirius.RegularExpressions.Invariant {
 	public sealed class RxQuantified<TLetter>: RxNode<TLetter>
@@ -29,11 +29,12 @@ namespace Sirius.RegularExpressions.Invariant {
 			get;
 		}
 
-		internal override int PrecedenceLevel => 0;
+		internal override int EvaluationPrecedence => 0;
 
 		public override void ComputeLengths(out int min, out int? max) {
-			min = this.Min;
-			max = this.Max;
+			this.Inner.ComputeLengths(out var innerMin, out var innerMax);
+			min = this.Min*innerMin;
+			max = this.Max*innerMax;
 		}
 
 		protected override bool EqualsInternal(RxNode<TLetter> other) {
@@ -50,7 +51,7 @@ namespace Sirius.RegularExpressions.Invariant {
 		}
 
 		protected override void WriteToInternal(RichTextWriter writer) {
-			this.Inner.WriteTo(writer, this.PrecedenceLevel);
+			this.Inner.WriteTo(writer, this.EvaluationPrecedence);
 			if (this.Max.GetValueOrDefault(int.MaxValue) > 0) {
 				if ((this.Min == 0) && (this.Max == 1)) {
 					writer.Write("?");

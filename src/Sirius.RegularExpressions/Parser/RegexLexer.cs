@@ -10,35 +10,41 @@ using Sirius.Unicode;
 
 namespace Sirius.RegularExpressions.Parser {
 	public sealed class RegexLexer: Lexer<char, LetterId> {
-		internal static readonly SymbolId SymNoise = 0;
-		public static readonly SymbolId SymCharset = 1;
-		public static readonly SymbolId SymRegexLetter = 2;
-		public static readonly SymbolId SymRegexEscape = 3;
-		public static readonly SymbolId SymRegexCharset = 4;
-		public static readonly SymbolId SymRegexKleene = 5;
-		public static readonly SymbolId SymRegexRepeat = 6;
-		public static readonly SymbolId SymRegexAny = 7;
-		public static readonly SymbolId SymRegexOptional = 8;
-		public static readonly SymbolId SymRegexDot = 9;
-		public static readonly SymbolId SymSensitiveGroup = 10;
-		public static readonly SymbolId SymInsensitiveGroup = 11;
-		public static readonly SymbolId SymBeginGroup = 12;
-		public static readonly SymbolId SymEndGroup = 13;
+		public const int SymWhitespace = 0;
+
+		public const int SymCharset = 1;
+		public const int SymRegexLetter = 2;
+		public const int SymRegexEscape = 3;
+		public const int SymRegexCharset = 4;
+		public const int SymRegexDot = 5;
+
+		public const int SymQuantifyKleene = 6;
+		public const int SymQuantifyRepeat = 7;
+		public const int SymQuantifyAny = 8;
+		public const int SymQuantifyOptional = 9;
+
+		public const int SymAlternate = 10;
+
+		public const int SymSensitiveGroup = 11;
+		public const int SymInsensitiveGroup = 12;
+		public const int SymBeginGroup = 13;
+		public const int SymEndGroup = 14;
 
 		public static readonly Func<SymbolId, string> SymbolNameResolver = new Dictionary<SymbolId, string>(17) {
 				{SymbolId.Accept, "(Accept)"},
 				{SymbolId.Reject, "(Reject)"},
 				{SymbolId.Eof, "(Eof)"},
-				{SymNoise, "(Noise)"},
+				{SymWhitespace, "(Whitespace)"},
 				{SymCharset, "Charset"},
 				{SymRegexLetter, "RegexLetter"},
 				{SymRegexEscape, "RegexEscape"},
 				{SymRegexCharset, "RegexCharset"},
-				{SymRegexKleene, "RegexKleene"},
-				{SymRegexRepeat, "RegexRepeat"},
-				{SymRegexAny, "RegexAny"},
-				{SymRegexOptional, "RegexOptional"},
 				{SymRegexDot, "RegexDot"},
+				{SymQuantifyKleene, "QuantifyKleene"},
+				{SymQuantifyRepeat, "QuantifyRepeat"},
+				{SymQuantifyAny, "QuantifyAny"},
+				{SymQuantifyOptional, "QuantifyOptional"},
+				{SymAlternate, "Alternate"},
 				{SymSensitiveGroup, "SensitiveGroup"},
 				{SymInsensitiveGroup, "InsensitiveGroup"},
 				{SymBeginGroup, "BeginGroup"},
@@ -47,16 +53,15 @@ namespace Sirius.RegularExpressions.Parser {
 
 		private static readonly Lazy<Func<Action<SymbolId, IEnumerable<char>, long>, RegexLexer>> factory = new Lazy<Func<Action<SymbolId, IEnumerable<char>, long>, RegexLexer>>(() => {
 			CreateStateMachine(out var stateMachine, out var startStateId);
-			return tokenAction => new RegexLexer(stateMachine.Compile(), new Id<DfaState<LetterId>>(startStateId), true, tokenAction, SymNoise);
+			return tokenAction => new RegexLexer(stateMachine.Compile(), new Id<DfaState<LetterId>>(startStateId), true, tokenAction);
 		}, LazyThreadSafetyMode.PublicationOnly);
 
 		private static IReadOnlyDictionary<string, RangeSet<Codepoint>> CreateNamedSets() {
-			var regexPrintable = RangeSet<Codepoint>.Subtract(Codepoints.ValidBmp, UnicodeCharSetProvider.SpaceCharSet);
 			return new Dictionary<string, RangeSet<Codepoint>>(StringComparer.Ordinal) {
-					{"RegexChar", RangeSet<Codepoint>.Subtract(regexPrintable, RangeSet<Codepoint>.Union(new RangeSet<Codepoint>(@"|/\{}()[].+?*".ToCodepoints()), UnicodeRanges.FromUnicodeName("InCombining_Diacritical_Marks")))},
-					{"RegexCharset", RangeSet<Codepoint>.Subtract(regexPrintable, new RangeSet<Codepoint>(@"\]".ToCodepoints()))},
-					{"EscapePrintable", RangeSet<Codepoint>.Subtract(regexPrintable, new RangeSet<Codepoint>(@"PpxUu".ToCodepoints()))},
-					{"CharsetPrintable", RangeSet<Codepoint>.Subtract(regexPrintable, new RangeSet<Codepoint>(@"}".ToCodepoints()))},
+					{"RegexChar", RangeSet<Codepoint>.Subtract(RangeSet<Codepoint>.Subtract(Codepoints.ValidBmp, UnicodeCharSetProvider.SpaceCharSet), RangeSet<Codepoint>.Union(new RangeSet<Codepoint>(@"|/\{}()[].+?*".ToCodepoints()), UnicodeRanges.FromUnicodeName("InCombining_Diacritical_Marks")))},
+					{"RegexCharset", RangeSet<Codepoint>.Subtract(Codepoints.ValidBmp, new RangeSet<Codepoint>(@"\]".ToCodepoints()))},
+					{"EscapePrintable", RangeSet<Codepoint>.Subtract(Codepoints.ValidBmp, new RangeSet<Codepoint>(@"PpxUu".ToCodepoints()))},
+					{"CharsetPrintable", RangeSet<Codepoint>.Subtract(Codepoints.ValidBmp, new RangeSet<Codepoint>(@"}".ToCodepoints()))},
 					{"HexChar", new RangeSet<Codepoint>(@"0123456789AaBbCcDdEeFf".ToCodepoints())},
 					{"Digit", new RangeSet<Codepoint>(@"0123456789".ToCodepoints())}
 			};
@@ -107,20 +112,20 @@ namespace Sirius.RegularExpressions.Parser {
 							RegexQuantified.Create(
 									RegexMatchSet.FromClass(CharSetClass.Space),
 									RegexQuantifier.Any()),
-							SymNoise),
+							SymWhitespace, 0),
 					RegexAccept.Create(
 							rxCharset,
-							SymCharset),
+							SymCharset, 0),
 					RegexAccept.Create(
 							RegexConcatenation.Create(
 									RegexMatchSet.FromNamedCharset("{RegexChar}"),
 									RegexQuantified.Create(
 											RegexMatchSet.FromUnicode("InCombining_Diacritical_Marks"),
 											RegexQuantifier.Kleene())),
-							SymRegexLetter),
+							SymRegexLetter, 0),
 					RegexAccept.Create(
 							rxEscape,
-							SymRegexEscape),
+							SymRegexEscape, 0),
 					RegexAccept.Create(
 							RegexConcatenation.Create(
 									RegexMatchSet.FromChars('['),
@@ -133,10 +138,13 @@ namespace Sirius.RegularExpressions.Parser {
 													rxEscape),
 											RegexQuantifier.Any()),
 									RegexMatchSet.FromChars(']')),
-							SymRegexCharset),
+							SymRegexCharset, 0),
+					RegexAccept.Create(
+							RegexMatchSet.FromChars('.'),
+							SymRegexDot, 0),
 					RegexAccept.Create(
 							RegexMatchSet.FromChars('*'),
-							SymRegexKleene),
+							SymQuantifyKleene, 0),
 					RegexAccept.Create(
 							RegexConcatenation.Create(
 									RegexMatchSet.FromChars('{'),
@@ -151,22 +159,19 @@ namespace Sirius.RegularExpressions.Parser {
 															RegexQuantifier.Kleene())),
 											RegexQuantifier.Optional()),
 									RegexMatchSet.FromChars('}')),
-							SymRegexRepeat),
+							SymQuantifyRepeat, 0),
 					RegexAccept.Create(
 							RegexMatchSet.FromChars('+'),
-							SymRegexAny),
+							SymQuantifyAny, 0),
 					RegexAccept.Create(
 							RegexMatchSet.FromChars('?'),
-							SymRegexOptional),
+							SymQuantifyOptional, 0),
 					RegexAccept.Create(
-							RegexMatchSet.FromChars('.'),
-							SymRegexDot),
-					RegexAccept.Create(
-							RegexMatchSet.FromChars('*'),
-							SymRegexKleene),
+							RegexMatchSet.FromChars('|'),
+							SymAlternate, 0),
 					RegexAccept.Create(
 							RegexMatchSet.FromChars('('),
-							SymBeginGroup),
+							SymBeginGroup, 0),
 					RegexAccept.Create(
 							RegexConcatenation.Create(
 									RegexMatchSet.FromChars('('),
@@ -175,7 +180,7 @@ namespace Sirius.RegularExpressions.Parser {
 									RegexMatchSet.FromChars('i'),
 									RegexMatchSet.FromChars(':')
 							),
-							SymSensitiveGroup),
+							SymSensitiveGroup, 0),
 					RegexAccept.Create(
 							RegexConcatenation.Create(
 									RegexMatchSet.FromChars('('),
@@ -183,10 +188,10 @@ namespace Sirius.RegularExpressions.Parser {
 									RegexMatchSet.FromChars('i'),
 									RegexMatchSet.FromChars(':')
 							),
-							SymInsensitiveGroup),
+							SymInsensitiveGroup, 0),
 					RegexAccept.Create(
 							RegexMatchSet.FromChars(')'),
-							SymEndGroup));
+							SymEndGroup, 0));
 		}
 
 		public static RegexLexer Create(Action<SymbolId, IEnumerable<char>, long> tokenAction) {
@@ -205,7 +210,7 @@ namespace Sirius.RegularExpressions.Parser {
 			startStateId = dfa.StartState.Id.ToInt32();
 		}
 
-		private RegexLexer(DfaStateMachine<LetterId, char> stateMachine, Id<DfaState<LetterId>> startStateId, bool handleEof, Action<SymbolId, IEnumerable<char>, long> tokenAction, params SymbolId[] symbolsToIgnore):
-				base(stateMachine, startStateId, handleEof, tokenAction, symbolsToIgnore) { }
+		private RegexLexer(DfaStateMachine<LetterId, char> stateMachine, Id<DfaState<LetterId>> startStateId, bool handleEof, Action<SymbolId, IEnumerable<char>, long> tokenAction):
+				base(stateMachine, startStateId, handleEof, tokenAction) { }
 	}
 }

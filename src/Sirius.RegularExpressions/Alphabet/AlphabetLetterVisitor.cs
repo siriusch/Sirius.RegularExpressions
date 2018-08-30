@@ -7,7 +7,7 @@ namespace Sirius.RegularExpressions.Alphabet {
 	internal class AlphabetLetterVisitor<TLetter>: IRegexVisitor<TLetter, Func<RxMatch<TLetter>, ICollection<LetterId>>, RxNode<LetterId>>
 			where TLetter: IEquatable<TLetter> {
 		public RxNode<LetterId> Accept(RxAccept<TLetter> node, Func<RxMatch<TLetter>, ICollection<LetterId>> context) {
-			return new RxAccept<LetterId>(node.Inner.Visit(this, context), node.Symbol);
+			return new RxAccept<LetterId>(node.Inner.Visit(this, context), node.Symbol, node.AcceptPrecedence);
 		}
 
 		public RxNode<LetterId> Alternation(RxAlternation<TLetter> node, Func<RxMatch<TLetter>, ICollection<LetterId>> context) {

@@ -1,19 +1,19 @@
-﻿using System;
+using System;
+using System.IO;
 
-using bsn.GoldParser.Text;
+using Sirius.Text;
 
 namespace Sirius.RegularExpressions.Invariant {
 	public sealed class RxAccept<TLetter>: RxNode<TLetter>
 			where TLetter: IEquatable<TLetter> {
-		public static RxAccept<TLetter> Create(RxNode<TLetter> inner, SymbolId symbol) {
-			if (inner.IsEmpty()) {
-				throw new ArgumentException("Zero-length accept", nameof(inner));
-			}
-			return new RxAccept<TLetter>(inner, symbol);
-		}
-
-		public RxAccept(RxNode<TLetter> inner, SymbolId symbol = default(SymbolId)) {
+		public RxAccept(RxNode<TLetter> inner, SymbolId symbol, int? precedence) {
 			this.Symbol = symbol;
+			if (precedence.HasValue) {
+				this.AcceptPrecedence = precedence.Value;
+			} else {
+				inner.ComputeLengths(out var min, out var max);
+				this.AcceptPrecedence = min == max ? int.MaxValue : min*(ushort.MaxValue + 1)+max.GetValueOrDefault(ushort.MaxValue);
+			}
 			this.Inner = inner;
 		}
 
@@ -25,7 +25,11 @@ namespace Sirius.RegularExpressions.Invariant {
 			get;
 		}
 
-		internal override int PrecedenceLevel => this.Inner.PrecedenceLevel;
+		public int AcceptPrecedence {
+			get;
+		}
+
+		internal override int EvaluationPrecedence => this.Inner.EvaluationPrecedence;
 
 		public override void ComputeLengths(out int min, out int? max) {
 			this.Inner.ComputeLengths(out min, out max);
@@ -44,7 +48,7 @@ namespace Sirius.RegularExpressions.Invariant {
 		}
 
 		protected override void WriteToInternal(RichTextWriter writer) {
-			this.Inner.WriteTo(writer, this.PrecedenceLevel);
+			this.Inner.WriteTo(writer, this.EvaluationPrecedence);
 			writer.Write("√");
 			writer.Write("(");
 			writer.Write(this.Symbol);

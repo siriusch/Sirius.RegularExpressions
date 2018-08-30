@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 
-using bsn.GoldParser.Text;
+using Sirius.Text;
 
 namespace Sirius.RegularExpressions.Invariant {
 	public sealed class RxAlternation<TLetter>: RxBinaryNode<TLetter>
 			where TLetter: IEquatable<TLetter> {
 		public RxAlternation(RxNode<TLetter> left, RxNode<TLetter> right): base(left, right) { }
 
-		internal override int PrecedenceLevel => 2;
+		internal override int EvaluationPrecedence => 2;
 
 		public override void ComputeLengths(out int min, out int? max) {
 			int leftMin;
@@ -34,9 +34,9 @@ namespace Sirius.RegularExpressions.Invariant {
 		}
 
 		protected override void WriteToInternal(RichTextWriter writer) {
-			this.Left.WriteTo(writer, this.PrecedenceLevel);
+			this.Left.WriteTo(writer, this.EvaluationPrecedence);
 			writer.Write('|');
-			this.Right.WriteTo(writer, this.PrecedenceLevel);
+			this.Right.WriteTo(writer, this.EvaluationPrecedence);
 		}
 	}
 }

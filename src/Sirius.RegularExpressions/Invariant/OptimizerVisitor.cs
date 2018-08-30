@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,7 +8,7 @@ namespace Sirius.RegularExpressions.Invariant {
 	internal class OptimizerVisitor<TLetter>: IRegexVisitor<TLetter, object, RxNode<TLetter>>
 			where TLetter: IEquatable<TLetter> {
 		public RxNode<TLetter> Accept(RxAccept<TLetter> node, object context) {
-			return new RxAccept<TLetter>(node.Inner.Visit(this, context), node.Symbol);
+			return new RxAccept<TLetter>(node.Inner.Visit(this, context), node.Symbol, node.AcceptPrecedence);
 		}
 
 		public RxNode<TLetter> Alternation(RxAlternation<TLetter> node, object context) {

@@ -61,7 +61,7 @@ namespace Sirius.RegularExpressions.Automata {
 			var expression = RegexParser.Parse(regex, 0);
 			var mapper = new UnicodeCodepointMapper(false, false);
 			var rxCodepoint = expression.ToInvariant(mapper, new UnicodeCharSetProvider(), caseSensitive);
-			var rxAccept = new RxAccept<Codepoint>(rxCodepoint);
+			var rxAccept = new RxAccept<Codepoint>(rxCodepoint, default(SymbolId), null);
 			var nfa = NfaBuilder<Codepoint>.Build(rxAccept, mapper.Negate);
 			WriteDiagram(this.output, nfa);
 		}

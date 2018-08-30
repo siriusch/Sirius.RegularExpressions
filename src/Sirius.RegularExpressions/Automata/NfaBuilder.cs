@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Sirius.Collections;
@@ -7,14 +7,13 @@ using Sirius.RegularExpressions.Invariant;
 namespace Sirius.RegularExpressions.Automata {
 	public sealed class NfaBuilder<TLetter>: IRegexVisitor<TLetter, NfaState<TLetter>, NfaState<TLetter>>
 			where TLetter: struct, IEquatable<TLetter>, IComparable<TLetter> {
-		private readonly Func<RangeSet<TLetter>, RangeSet<TLetter>> negate;
-
 		public static Nfa<TLetter> Build(RxNode<TLetter> node, Func<RangeSet<TLetter>, RangeSet<TLetter>> negate) {
 			var builder = new NfaBuilder<TLetter>(negate);
 			var endState = node.Visit(builder, builder.startState);
 			return new Nfa<TLetter>(builder.states, builder.startState, endState);
 		}
 
+		private readonly Func<RangeSet<TLetter>, RangeSet<TLetter>> negate;
 		private readonly NfaState<TLetter> startState;
 		private readonly Dictionary<Id<NfaState<TLetter>>, NfaState<TLetter>> states = new Dictionary<Id<NfaState<TLetter>>, NfaState<TLetter>>();
 
@@ -24,7 +23,7 @@ namespace Sirius.RegularExpressions.Automata {
 		}
 
 		NfaState<TLetter> IRegexVisitor<TLetter, NfaState<TLetter>, NfaState<TLetter>>.Accept(RxAccept<TLetter> node, NfaState<TLetter> context) {
-			var target = this.Create(node.Symbol);
+			var target = this.Create(node.Symbol, node.AcceptPrecedence);
 			node.Inner.Visit(this, context).AddEpsilonTransition(target);
 			return target;
 		}
@@ -86,9 +85,9 @@ namespace Sirius.RegularExpressions.Automata {
 			return target;
 		}
 
-		private NfaState<TLetter> Create(SymbolId? acceptSymbol = null) {
+		private NfaState<TLetter> Create(SymbolId? acceptSymbol = null, int precedence = 0) {
 			var id = new Id<NfaState<TLetter>>(this.states.Count);
-			var state = new NfaState<TLetter>(id, acceptSymbol);
+			var state = new NfaState<TLetter>(id, acceptSymbol, precedence);
 			this.states.Add(id, state);
 			return state;
 		}

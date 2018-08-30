@@ -35,13 +35,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="bsn.GoldParser, Version=2.0.79.0, Culture=neutral, PublicKeyToken=efd7d300630fec10, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\bsn.GoldParser.2.0.79\lib\bsn.GoldParser.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Sirius.Common, Version=1.0.3.0, Culture=neutral, PublicKeyToken=3d58c5c8efc41aa9, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Sirius.Common.1.0.3\lib\net461\Sirius.Common.dll</HintPath>
+    <Reference Include="Sirius.Common, Version=1.0.4.23342, Culture=neutral, PublicKeyToken=3d58c5c8efc41aa9, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Sirius.Common.1.0.4\lib\net461\Sirius.Common.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -53,13 +49,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Parser\Regex.grm" />
     <None Include="Sirius.RegularExpressions.nuspec">
       <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Parser\Regex.egt" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Alphabet\AlphabetBuilder.cs" />
@@ -116,7 +108,6 @@
     <Compile Include="Parser\RegexParser.cs" />
     <Compile Include="Parser\RegexQuantified.cs" />
     <Compile Include="Parser\RegexQuantifier.cs" />
-    <Compile Include="Parser\RegexToken.cs" />
     <Compile Include="Parser\RxUtf8Visitor.cs" />
     <Compile Include="Parser\UnicodeCharSetProvider.cs" />
     <Compile Include="Parser\UnicodeCodepointMapper.cs" />

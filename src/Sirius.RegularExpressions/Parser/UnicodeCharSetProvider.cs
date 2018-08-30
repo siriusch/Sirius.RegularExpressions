@@ -11,7 +11,7 @@ namespace Sirius.RegularExpressions.Parser {
 		private static readonly Lazy<RangeSet<Codepoint>> digitCharSet = new Lazy<RangeSet<Codepoint>>(() => UnicodeRanges.FromUnicodeCategory(UnicodeCategory.DecimalDigitNumber), LazyThreadSafetyMode.PublicationOnly);
 		private static readonly Lazy<RangeSet<Codepoint>> dotCharSet = new Lazy<RangeSet<Codepoint>>(() => RangeSet<Codepoint>.Subtract(Codepoints.Valid, new RangeSet<Codepoint>('\n')), LazyThreadSafetyMode.PublicationOnly);
 		private static readonly Lazy<RangeSet<Codepoint>> spaceCharSet = new Lazy<RangeSet<Codepoint>>(() => RangeSet<Codepoint>.Union(new RangeSet<Codepoint>("\r\n".ToCodepoints()), UnicodeRanges.FromUnicodeName("Separator")), LazyThreadSafetyMode.PublicationOnly);
-		private static readonly Lazy<RangeSet<Codepoint>> wordCharSet = new Lazy<RangeSet<Codepoint>>(() => RangeSet<Codepoint>.Union(new RangeSet<Codepoint>('_'), UnicodeRanges.FromUnicodeName("Letter"), UnicodeRanges.FromUnicodeCategory(UnicodeCategory.DecimalDigitNumber)), LazyThreadSafetyMode.PublicationOnly);
+		private static readonly Lazy<RangeSet<Codepoint>> wordCharSet = new Lazy<RangeSet<Codepoint>>(() => RangeSet<Codepoint>.Union(new RangeSet<Codepoint>('_'), RangeSet<Codepoint>.Union(UnicodeRanges.FromUnicodeName("Letter"), UnicodeRanges.FromUnicodeCategory(UnicodeCategory.DecimalDigitNumber))), LazyThreadSafetyMode.PublicationOnly);
 
 		internal static RangeSet<Codepoint> SpaceCharSet => spaceCharSet.Value;
 

@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-using bsn.GoldParser.Text;
+using Sirius.Text;
 
 namespace Sirius.RegularExpressions.Invariant {
 	public sealed class RxMatch<TLetter>: RxNode<TLetter>
@@ -23,7 +23,7 @@ namespace Sirius.RegularExpressions.Invariant {
 			this.letters = new HashSet<TLetter>(entities);
 		}
 
-		internal override int PrecedenceLevel => 0;
+		internal override int EvaluationPrecedence => 0;
 
 		public ICollection<TLetter> Letters => this.letters;
 

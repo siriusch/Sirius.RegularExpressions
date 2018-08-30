@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 
-using bsn.GoldParser.Text;
+using Sirius.Text;
 
 namespace Sirius.RegularExpressions.Invariant {
 	public sealed class RxEmpty<TLetter>: RxNode<TLetter>
 			where TLetter: IEquatable<TLetter> {
 		public static readonly RxEmpty<TLetter> Default = new RxEmpty<TLetter>();
 
-		internal override int PrecedenceLevel => 0;
+		internal override int EvaluationPrecedence => 0;
 
 		public override void ComputeLengths(out int min, out int? max) {
 			min = 0;

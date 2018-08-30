@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -12,12 +12,17 @@ namespace Sirius.RegularExpressions.Automata {
 		private readonly HashSet<NfaState<TLetter>> epsilonTransitions = new HashSet<NfaState<TLetter>>(IdComparer<NfaState<TLetter>>.Default);
 		private readonly RangeDictionary<TLetter, NfaState<TLetter>> matchTransitions = new RangeDictionary<TLetter, NfaState<TLetter>>(IdComparer<NfaState<TLetter>>.Default);
 
-		internal NfaState(Id<NfaState<TLetter>> id, SymbolId? acceptId) {
+		internal NfaState(Id<NfaState<TLetter>> id, SymbolId? acceptId, int precedence) {
 			this.Id = id;
 			this.AcceptId = acceptId;
+			this.Precedence = precedence;
 		}
 
 		public SymbolId? AcceptId {
+			get;
+		}
+
+		public int Precedence {
 			get;
 		}
 
