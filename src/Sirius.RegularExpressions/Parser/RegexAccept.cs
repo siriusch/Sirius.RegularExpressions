@@ -7,7 +7,9 @@ namespace Sirius.RegularExpressions.Parser {
 			return new RegexAccept(inner, symbol, precedence);
 		}
 
-		private readonly RegexExpression inner;
+		public static RegexExpression CreateDeep(RegexExpression inner, SymbolId symbol, int? precedence = null) {
+			return inner.Visit(AcceptDeepVisitor.Default, new KeyValuePair<SymbolId, int?>(symbol, precedence));
+		}
 
 		public RegexAccept(RegexExpression inner, SymbolId symbol, int? precedence) {
 			this.Inner = inner;
