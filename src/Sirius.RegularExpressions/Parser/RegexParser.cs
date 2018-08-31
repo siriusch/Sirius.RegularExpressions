@@ -52,7 +52,7 @@ namespace Sirius.RegularExpressions.Parser {
 				AppendExpression(null);
 				var expression = this.alternate != null ? RegexAlternation.Create(this.alternate, this.current) : this.current;
 				if (this.caseSensitive.HasValue) {
-					return this.caseSensitive.Value ? RegexCaseGroup.CaseSensitve(expression) : RegexCaseGroup.CaseInsensitve(expression);
+					return this.caseSensitive.Value ? RegexCaseGroup.CreateSensitive(expression) : RegexCaseGroup.CreateInsensitive(expression);
 				}
 				return expression;
 			}

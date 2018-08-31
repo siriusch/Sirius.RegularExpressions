@@ -1,20 +1,22 @@
 using System;
-
-using Sirius.RegularExpressions.Invariant;
-using Sirius.Unicode;
+using System.Collections.Generic;
 
 namespace Sirius.RegularExpressions.Parser {
 	public class RegexAccept: RegexExpression {
-		public static RegexAccept Create(RegexExpression inner, SymbolId symbol, int? precedence=null) {
+		public static RegexExpression Create(RegexExpression inner, SymbolId symbol, int? precedence = null) {
 			return new RegexAccept(inner, symbol, precedence);
 		}
 
 		private readonly RegexExpression inner;
 
 		public RegexAccept(RegexExpression inner, SymbolId symbol, int? precedence) {
-			this.inner = inner;
+			this.Inner = inner;
 			this.Symbol = symbol;
 			this.Precedence = precedence;
+		}
+
+		public RegexExpression Inner {
+			get;
 		}
 
 		public SymbolId Symbol {
@@ -25,8 +27,8 @@ namespace Sirius.RegularExpressions.Parser {
 			get;
 		}
 
-		public override RxNode<TLetter> ToInvariant<TLetter>(IUnicodeMapper<TLetter> mapper, IRangeSetProvider<Codepoint> provider, bool caseSensitive) {
-			return new RxAccept<TLetter>(this.inner.ToInvariant(mapper, provider, caseSensitive), this.Symbol, this.Precedence);
+		public override TResult Visit<TContext, TResult>(IRegexVisitor<TContext, TResult> visitor, TContext context) {
+			return visitor.Accept(this, context);
 		}
 	}
 }

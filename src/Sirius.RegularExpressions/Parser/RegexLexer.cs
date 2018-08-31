@@ -56,6 +56,11 @@ namespace Sirius.RegularExpressions.Parser {
 			return tokenAction => new RegexLexer(stateMachine.Compile(), new Id<DfaState<LetterId>>(startStateId), true, tokenAction);
 		}, LazyThreadSafetyMode.PublicationOnly);
 
+		static RegexLexer() {
+			// Warmup the regex lexer
+			ThreadPool.QueueUserWorkItem(arg => arg = factory.Value);
+		}
+
 		private static IReadOnlyDictionary<string, RangeSet<Codepoint>> CreateNamedSets() {
 			return new Dictionary<string, RangeSet<Codepoint>>(StringComparer.Ordinal) {
 					{"RegexChar", RangeSet<Codepoint>.Subtract(RangeSet<Codepoint>.Subtract(Codepoints.ValidBmp, UnicodeCharSetProvider.SpaceCharSet), RangeSet<Codepoint>.Union(new RangeSet<Codepoint>(@"|/\{}()[].+?*".ToCodepoints()), UnicodeRanges.FromUnicodeName("InCombining_Diacritical_Marks")))},

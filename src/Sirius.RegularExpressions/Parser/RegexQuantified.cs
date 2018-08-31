@@ -1,8 +1,5 @@
 using System;
 
-using Sirius.RegularExpressions.Invariant;
-using Sirius.Unicode;
-
 namespace Sirius.RegularExpressions.Parser {
 	public class RegexQuantified: RegexExpression {
 		public static RegexExpression Create(RegexExpression inner, RegexQuantifier quantifier) {
@@ -15,16 +12,21 @@ namespace Sirius.RegularExpressions.Parser {
 			return new RegexQuantified(inner, quantifier);
 		}
 
-		private readonly RegexExpression inner;
-		private readonly RegexQuantifier quantifier;
-
 		public RegexQuantified(RegexExpression inner, RegexQuantifier quantifier) {
-			this.inner = inner;
-			this.quantifier = quantifier;
+			this.Inner = inner;
+			this.Quantifier = quantifier;
 		}
 
-		public override RxNode<TLetter> ToInvariant<TLetter>(IUnicodeMapper<TLetter> mapper, IRangeSetProvider<Codepoint> provider, bool caseSensitive) {
-			return new RxQuantified<TLetter>(this.inner.ToInvariant(mapper, provider, caseSensitive), this.quantifier.Min, this.quantifier.Max);
+		public RegexExpression Inner {
+			get;
+		}
+
+		public RegexQuantifier Quantifier {
+			get;
+		}
+
+		public override TResult Visit<TContext, TResult>(IRegexVisitor<TContext, TResult> visitor, TContext context) {
+			return visitor.Quantified(this, context);
 		}
 	}
 }

@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 
-using Sirius.RegularExpressions.Invariant;
-using Sirius.Unicode;
-
 namespace Sirius.RegularExpressions.Parser {
 	public class RegexAlternation: RegexExpression {
 		public static RegexExpression Create(params RegexExpression[] expressions) {
@@ -37,16 +34,21 @@ namespace Sirius.RegularExpressions.Parser {
 			return new RegexAlternation(left, right);
 		}
 
-		private readonly RegexExpression left;
-		private readonly RegexExpression right;
-
 		public RegexAlternation(RegexExpression left, RegexExpression right) {
-			this.left = left;
-			this.right = right;
+			this.Left = left;
+			this.Right = right;
 		}
 
-		public override RxNode<TLetter> ToInvariant<TLetter>(IUnicodeMapper<TLetter> mapper, IRangeSetProvider<Codepoint> provider, bool caseSensitive) {
-			return new RxAlternation<TLetter>(this.left.ToInvariant(mapper, provider, caseSensitive), this.right.ToInvariant(mapper, provider, caseSensitive));
+		public RegexExpression Left {
+			get;
+		}
+
+		public RegexExpression Right {
+			get;
+		}
+
+		public override TResult Visit<TContext, TResult>(IRegexVisitor<TContext, TResult> visitor, TContext context) {
+			return visitor.Alternation(this, context);
 		}
 	}
 }

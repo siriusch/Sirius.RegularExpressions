@@ -1,6 +1,5 @@
 using System;
 
-using Sirius.RegularExpressions.Invariant;
 using Sirius.Unicode;
 
 namespace Sirius.RegularExpressions.Parser {
@@ -20,8 +19,8 @@ namespace Sirius.RegularExpressions.Parser {
 			get;
 		}
 
-		public override RxNode<TLetter> ToInvariant<TLetter>(IUnicodeMapper<TLetter> mapper, IRangeSetProvider<Codepoint> provider, bool caseSensitive) {
-			return mapper.MapGrapheme(this.Text, caseSensitive);
+		public override TResult Visit<TContext, TResult>(IRegexVisitor<TContext, TResult> visitor, TContext context) {
+			return visitor.MatchGrapheme(this, context);
 		}
 	}
 }

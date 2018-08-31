@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 
 using Sirius.Collections;
-using Sirius.RegularExpressions.Invariant;
 using Sirius.Unicode;
 
 namespace Sirius.RegularExpressions.Parser {
@@ -149,8 +148,8 @@ namespace Sirius.RegularExpressions.Parser {
 			get;
 		}
 
-		public override RxNode<TLetter> ToInvariant<TLetter>(IUnicodeMapper<TLetter> mapper, IRangeSetProvider<Codepoint> provider, bool caseSensitive) {
-			return mapper.MapCodepoints(this.Handle.Negate, this.Handle.GetCharSet(provider), caseSensitive);
+		public override TResult Visit<TContext, TResult>(IRegexVisitor<TContext, TResult> visitor, TContext context) {
+			return visitor.MatchSet(this, context);
 		}
 	}
 }

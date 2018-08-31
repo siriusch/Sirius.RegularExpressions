@@ -88,11 +88,13 @@
     <Compile Include="Lexer.cs" />
     <Compile Include="LexerBase.cs" />
     <Compile Include="LexerBuilder.cs" />
+    <Compile Include="Parser\AcceptDeepVisitor.cs" />
     <Compile Include="Parser\CharSetClass.cs" />
     <Compile Include="Parser\CharSetProviderBase.cs" />
     <Compile Include="Parser\EcmaCharSetProvider.cs" />
     <Compile Include="Parser\IAlphabetFor.cs" />
     <Compile Include="Parser\IRangeSetProvider.cs" />
+    <Compile Include="Parser\IRegexVisitor.cs" />
     <Compile Include="Parser\IUnicodeMapper.cs" />
     <Compile Include="Parser\RangeSetCategory.cs" />
     <Compile Include="Parser\RangeSetHandle.cs" />
@@ -108,7 +110,7 @@
     <Compile Include="Parser\RegexParser.cs" />
     <Compile Include="Parser\RegexQuantified.cs" />
     <Compile Include="Parser\RegexQuantifier.cs" />
-    <Compile Include="Parser\RxUtf8Visitor.cs" />
+    <Compile Include="Parser\ToInvariantVisitor.cs" />
     <Compile Include="Parser\UnicodeCharSetProvider.cs" />
     <Compile Include="Parser\UnicodeCodepointMapper.cs" />
     <Compile Include="Parser\UnicodeMapperBase.cs" />
