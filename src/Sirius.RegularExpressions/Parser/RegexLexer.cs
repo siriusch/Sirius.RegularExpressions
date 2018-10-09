@@ -30,7 +30,7 @@ namespace Sirius.RegularExpressions.Parser {
 		public const int SymBeginGroup = 13;
 		public const int SymEndGroup = 14;
 
-		public static readonly Func<SymbolId, string> SymbolNameResolver = new Dictionary<SymbolId, string>(17) {
+		public static readonly Func<SymbolId, string> SymbolNameResolver = ((IReadOnlyDictionary<SymbolId, string>)new Dictionary<SymbolId, string>(17) {
 				{SymbolId.Accept, "(Accept)"},
 				{SymbolId.Reject, "(Reject)"},
 				{SymbolId.Eof, "(Eof)"},
@@ -49,7 +49,7 @@ namespace Sirius.RegularExpressions.Parser {
 				{SymInsensitiveGroup, "InsensitiveGroup"},
 				{SymBeginGroup, "BeginGroup"},
 				{SymEndGroup, "EndGroup"}
-		}.CreateGetterForIndexer();
+		}).CreateGetter();
 
 		private static readonly Lazy<Func<Action<SymbolId, IEnumerable<char>, long>, RegexLexer>> factory = new Lazy<Func<Action<SymbolId, IEnumerable<char>, long>, RegexLexer>>(() => {
 			CreateStateMachine(out var stateMachine, out var startStateId);
