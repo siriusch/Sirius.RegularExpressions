@@ -4,7 +4,7 @@ using Sirius.Text;
 
 namespace Sirius.RegularExpressions.Invariant {
 	public sealed class RxQuantified<TLetter>: RxNode<TLetter>
-			where TLetter: IEquatable<TLetter> {
+			where TLetter: IEquatable<TLetter>, IComparable<TLetter> {
 		public RxQuantified(RxNode<TLetter> inner, int min, int? max) {
 			if (min < 0) {
 				throw new ArgumentOutOfRangeException(nameof(min), $"{nameof(min)} cannot be inferior to 0");

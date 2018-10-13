@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 
 namespace Sirius.RegularExpressions.Invariant {
 	public interface IRegexVisitor<TLetter, in TContext, out TResult>
-			where TLetter: IEquatable<TLetter> {
+			where TLetter: IEquatable<TLetter>, IComparable<TLetter> {
 		TResult Accept(RxAccept<TLetter> node, TContext context);
 
 		TResult Alternation(RxAlternation<TLetter> node, TContext context);

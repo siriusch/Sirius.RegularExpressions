@@ -4,7 +4,7 @@ using Sirius.Text;
 
 namespace Sirius.RegularExpressions.Invariant {
 	public sealed class RxEmpty<TLetter>: RxNode<TLetter>
-			where TLetter: IEquatable<TLetter> {
+			where TLetter: IEquatable<TLetter>, IComparable<TLetter> {
 		public static readonly RxEmpty<TLetter> Default = new RxEmpty<TLetter>();
 
 		internal override int EvaluationPrecedence => 0;

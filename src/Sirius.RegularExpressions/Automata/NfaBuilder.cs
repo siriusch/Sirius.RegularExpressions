@@ -1,24 +1,21 @@
 using System;
 using System.Collections.Generic;
 
-using Sirius.Collections;
 using Sirius.RegularExpressions.Invariant;
 
 namespace Sirius.RegularExpressions.Automata {
 	public sealed class NfaBuilder<TLetter>: IRegexVisitor<TLetter, NfaState<TLetter>, NfaState<TLetter>>
 			where TLetter: struct, IEquatable<TLetter>, IComparable<TLetter> {
-		public static Nfa<TLetter> Build(RxNode<TLetter> node, Func<RangeSet<TLetter>, RangeSet<TLetter>> negate) {
-			var builder = new NfaBuilder<TLetter>(negate);
+		public static Nfa<TLetter> Build(RxNode<TLetter> node) {
+			var builder = new NfaBuilder<TLetter>();
 			var endState = node.Visit(builder, builder.startState);
 			return new Nfa<TLetter>(builder.states, builder.startState, endState);
 		}
 
-		private readonly Func<RangeSet<TLetter>, RangeSet<TLetter>> negate;
 		private readonly NfaState<TLetter> startState;
 		private readonly Dictionary<Id<NfaState<TLetter>>, NfaState<TLetter>> states = new Dictionary<Id<NfaState<TLetter>>, NfaState<TLetter>>();
 
-		public NfaBuilder(Func<RangeSet<TLetter>, RangeSet<TLetter>> negate) {
-			this.negate = negate;
+		public NfaBuilder() {
 			this.startState = this.Create();
 		}
 
@@ -49,14 +46,7 @@ namespace Sirius.RegularExpressions.Automata {
 
 		NfaState<TLetter> IRegexVisitor<TLetter, NfaState<TLetter>, NfaState<TLetter>>.Match(RxMatch<TLetter> node, NfaState<TLetter> context) {
 			var target = this.Create();
-			var ranges = new RangeSet<TLetter>(node.Letters.Condense());
-			if (node.Negate) {
-				if (this.negate == null) {
-					throw new InvalidOperationException("Negation not supported");
-				}
-				ranges = this.negate(ranges);
-			}
-			foreach (var range in ranges) {
+			foreach (var range in node.Letters) {
 				context.AddMatchTransition(range, target);
 			}
 			return target;

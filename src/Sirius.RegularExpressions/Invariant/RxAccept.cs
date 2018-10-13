@@ -5,7 +5,7 @@ using Sirius.Text;
 
 namespace Sirius.RegularExpressions.Invariant {
 	public sealed class RxAccept<TLetter>: RxNode<TLetter>
-			where TLetter: IEquatable<TLetter> {
+			where TLetter: IEquatable<TLetter>, IComparable<TLetter> {
 		public RxAccept(RxNode<TLetter> inner, SymbolId symbol, int? precedence) {
 			this.Symbol = symbol;
 			if (precedence.HasValue) {

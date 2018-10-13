@@ -9,15 +9,15 @@ using Sirius.Collections;
 namespace Sirius.RegularExpressions.Automata {
 	public static class DfaBuilder<TLetter>
 			where TLetter: struct, IComparable<TLetter>, IEquatable<TLetter> {
-		public static Dfa<TLetter> Build(INonFiniteAutomaton<TLetter> Nfa, TLetter? Eof = null, Id<DfaState<TLetter>> firstId = default(Id<DfaState<TLetter>>)) {
+		public static Dfa<TLetter> Build(INonFiniteAutomaton<TLetter> nfa, TLetter? eof = null, Id<DfaState<TLetter>> firstId = default(Id<DfaState<TLetter>>)) {
 			var dfaStates = new Dictionary<string, DfaStateBuilder<TLetter>>(StringComparer.Ordinal);
 			var result = new List<DfaState<TLetter>>();
 			// Step 1: compute the epsilon closure information for all NFA nodes
-			var closures = Nfa.States.ToDictionary(s => s.Id, state => state.EpsilonClosure().ToArray());
+			var closures = nfa.States.ToDictionary(s => s.Id, state => state.EpsilonClosure().ToArray());
 			// Step 2: simulate transitions
 			var pending = new Queue<DfaStateBuilder<TLetter>>();
 			DfaStateBuilder<TLetter> startDfaState;
-			if (!GetStateBuilder(dfaStates, firstId, closures[Nfa.StartState.Id], out startDfaState)) {
+			if (!GetStateBuilder(dfaStates, firstId, closures[nfa.StartState.Id], out startDfaState)) {
 				throw new InvalidOperationException("A new DFA state builder was expected");
 			}
 			DfaStateBuilder<TLetter> acceptDfaState;
@@ -36,8 +36,8 @@ namespace Sirius.RegularExpressions.Automata {
 						return new KeyValuePair<Range<TLetter>, IEnumerable<NfaState<TLetter>>>(rng, rangeStates);
 					}));
 				}
-				var groupedNfaTransitions = new RangeDictionary<TLetter, HashSet<NfaState<TLetter>>>(allNfaTransitions
-								.Select(p => new KeyValuePair<Range<TLetter>, HashSet<NfaState<TLetter>>>(p.Key, new HashSet<NfaState<TLetter>>(p.Value))),
+				var groupedNfaTransitions = new RangeDictionary<TLetter, HashSet<NfaState<TLetter>>>(
+						allNfaTransitions.Select(p => new KeyValuePair<Range<TLetter>, HashSet<NfaState<TLetter>>>(p.Key, new HashSet<NfaState<TLetter>>(p.Value))),
 						SetEqualityComparer<NfaState<TLetter>>.Default);
 				foreach (var matchTarget in groupedNfaTransitions) {
 					DfaStateBuilder<TLetter> targetDfaState;
@@ -96,8 +96,8 @@ namespace Sirius.RegularExpressions.Automata {
 						break;
 					case 1:
 						symbolStates.Add(state.Id, acceptSymbolIds[0]);
-						if (Eof.HasValue) {
-							state.SetTransition(Range<TLetter>.Create(Eof.Value), Dfa<TLetter>.Accept);
+						if (eof.HasValue) {
+							state.SetTransition(Range<TLetter>.Create(eof.Value), Dfa<TLetter>.Accept);
 						}
 						break;
 					default:
@@ -113,7 +113,7 @@ namespace Sirius.RegularExpressions.Automata {
 					pair.Value.SetTransition(range, states[target].Id);
 				}
 			}
-			return new Dfa<TLetter>(Eof, result, symbolStates);
+			return new Dfa<TLetter>(eof, result, symbolStates);
 		}
 
 		private static bool GetStateBuilder(Dictionary<string, DfaStateBuilder<TLetter>> dfaStates, Id<DfaState<TLetter>> firstId, IEnumerable<NfaState<TLetter>> states, out DfaStateBuilder<TLetter> builder) {

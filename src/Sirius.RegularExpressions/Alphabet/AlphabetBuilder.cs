@@ -38,14 +38,12 @@ namespace Sirius.RegularExpressions.Alphabet {
 			return ranges;
 		}
 
-		public AlphabetBuilder(RxNode<TLetter> expression, Func<RangeSet<TLetter>, RangeSet<TLetter>> negateCharSet, TLetter? eof = null, RangeSet<TLetter> validRanges = null): this(expression, (r, neg) => neg ? negateCharSet(r) : r, eof, validRanges) { }
-
-		public AlphabetBuilder(RxNode<TLetter> expression, Func<RangeSet<TLetter>, bool, RangeSet<TLetter>> transformCharSet, TLetter? eof = null, RangeSet<TLetter> validRanges = null) {
+		public AlphabetBuilder(RxNode<TLetter> expression, TLetter? eof = null, RangeSet<TLetter> validRanges = null) {
 			var eofRange = eof.HasValue ? new RangeSet<TLetter>(eof.Value) : RangeSet<TLetter>.Empty;
 			validRanges = RangeSet<TLetter>.Subtract(validRanges ?? RangeSet<TLetter>.All, eofRange);
 			// Step 1: Find all charset-generating regular expression parts
 			var visitor = new AlphabetBuilderVisitor<TLetter>();
-			expression.Visit(visitor, (letters, negate) => RangeSet<TLetter>.Subtract(transformCharSet(new RangeSet<TLetter>(letters), negate), eofRange));
+			expression.Visit(visitor, (letters, negate) => letters - eofRange);
 			var charsets = visitor.Charsets;
 			// Step 2: Get all ranges of all used charsets and register their "users"
 			var ranges = MakeRanges(charsets, validRanges);

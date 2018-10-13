@@ -18,7 +18,7 @@ namespace Sirius.RegularExpressions.Parser {
 					RegexParser.Parse("ab?c*", 4));
 			var mapper = new UnicodeCodepointMapper(false, false);
 			var invariant = expression.ToInvariant(mapper, new UnicodeCharSetProvider(name => new RangeSet<Codepoint>(name.ToCodepoints())), true);
-			var nfa = NfaBuilder<Codepoint>.Build(invariant, mapper.Negate);
+			var nfa = NfaBuilder<Codepoint>.Build(invariant);
 			return DfaBuilder<Codepoint>.Build(nfa, Codepoints.EOF);
 		}, LazyThreadSafetyMode.PublicationOnly);
 
@@ -65,8 +65,8 @@ namespace Sirius.RegularExpressions.Parser {
 		[InlineData("a+b")]
 		[InlineData("a*b")]
 		[InlineData("a|b|c")]
-		[InlineData("[abc]")]
-		[InlineData("[abc]|abc|cba")]
+		[InlineData("[a-c]")]
+		[InlineData("[a-c]|abc|cba")]
 		[InlineData("ab?c*")]
 		public void RegexParseRoundtrip(string rx) {
 			var expression = RegexParser.Parse(rx, null);

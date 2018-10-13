@@ -5,7 +5,7 @@ using Sirius.RegularExpressions.Invariant;
 
 namespace Sirius.RegularExpressions.Alphabet {
 	internal class AlphabetLetterVisitor<TLetter>: IRegexVisitor<TLetter, Func<RxMatch<TLetter>, ICollection<LetterId>>, RxNode<LetterId>>
-			where TLetter: IEquatable<TLetter> {
+			where TLetter: IEquatable<TLetter>, IComparable<TLetter> {
 		public RxNode<LetterId> Accept(RxAccept<TLetter> node, Func<RxMatch<TLetter>, ICollection<LetterId>> context) {
 			return new RxAccept<LetterId>(node.Inner.Visit(this, context), node.Symbol, node.AcceptPrecedence);
 		}
@@ -23,7 +23,7 @@ namespace Sirius.RegularExpressions.Alphabet {
 		}
 
 		public RxNode<LetterId> Match(RxMatch<TLetter> node, Func<RxMatch<TLetter>, ICollection<LetterId>> context) {
-			return new RxMatch<LetterId>(node.Negate, context(node));
+			return new RxMatch<LetterId>(context(node));
 		}
 
 		public RxNode<LetterId> Quantified(RxQuantified<TLetter> node, Func<RxMatch<TLetter>, ICollection<LetterId>> context) {

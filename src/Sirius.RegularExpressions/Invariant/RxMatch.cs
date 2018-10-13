@@ -3,33 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+using Sirius.Collections;
 using Sirius.Text;
 
 namespace Sirius.RegularExpressions.Invariant {
 	public sealed class RxMatch<TLetter>: RxNode<TLetter>
-			where TLetter: IEquatable<TLetter> {
+			where TLetter: IEquatable<TLetter>, IComparable<TLetter> {
 		private static readonly Func<TLetter, string> letterToString = typeof(TLetter).IsPrimitive && typeof(TLetter) != typeof(char)
 				? typeof(TLetter) == typeof(byte)
 						? new Func<TLetter, string>(letter => $"({letter:x2})")
 						: new Func<TLetter, string>(letter => $"({letter})")
 				: letter => Regex.Escape(letter.ToString());
 
-		private readonly HashSet<TLetter> letters;
+		private readonly RangeSet<TLetter> letters;
 
-		public RxMatch(bool negate, params TLetter[] entities): this(negate, (IEnumerable<TLetter>)entities) { }
+		public RxMatch(params TLetter[] entities): this((IEnumerable<TLetter>)entities) { }
 
-		public RxMatch(bool negate, IEnumerable<TLetter> entities) {
-			this.Negate = negate;
-			this.letters = new HashSet<TLetter>(entities);
+		public RxMatch(IEnumerable<TLetter> entities): this(new RangeSet<TLetter>(entities.Condense())) {}
+
+		public RxMatch(RangeSet<TLetter> entities) {
+			this.letters = entities;
 		}
 
 		internal override int EvaluationPrecedence => 0;
 
-		public ICollection<TLetter> Letters => this.letters;
-
-		public bool Negate {
-			get;
-		}
+		public RangeSet<TLetter> Letters => this.letters;
 
 		public override void ComputeLengths(out int min, out int? max) {
 			min = 1;
@@ -37,7 +35,7 @@ namespace Sirius.RegularExpressions.Invariant {
 		}
 
 		protected override bool EqualsInternal(RxNode<TLetter> other) {
-			return this.letters.SetEquals(((RxMatch<TLetter>)other).Letters);
+			return this.letters.Equals(((RxMatch<TLetter>)other).Letters);
 		}
 
 		public override int GetHashCode() {
@@ -49,21 +47,21 @@ namespace Sirius.RegularExpressions.Invariant {
 		}
 
 		protected override void WriteToInternal(RichTextWriter writer) {
-			switch (this.Letters.Count) {
+			switch (this.Letters.Expand().Take(2).Count()) {
 			case 0:
 				break;
 			case 1:
-				if (this.Negate) {
-					goto default;
-				}
-				writer.Write(letterToString(this.Letters.Single()));
+				writer.Write(letterToString(this.Letters.Expand().Single()));
 				break;
 			default:
 				writer.Write('[');
-				if (this.Negate) {
-					writer.Write("^");
+				foreach (var range in this.letters) {
+					writer.Write(letterToString(range.From));
+					if (!range.From.Equals(range.To)) {
+						writer.Write('-');
+						writer.Write(letterToString(range.To));
+					}
 				}
-				writer.Write(string.Join("", this.Letters.Select(letterToString)));
 				writer.Write(']');
 				break;
 			}

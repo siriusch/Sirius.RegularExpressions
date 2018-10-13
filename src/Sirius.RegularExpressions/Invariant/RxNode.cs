@@ -5,7 +5,7 @@ using Sirius.Text;
 
 namespace Sirius.RegularExpressions.Invariant {
 	public abstract class RxNode<TLetter>: IEquatable<RxNode<TLetter>>
-			where TLetter: IEquatable<TLetter> {
+			where TLetter: IEquatable<TLetter>, IComparable<TLetter> {
 		internal abstract int EvaluationPrecedence {
 			get;
 		}

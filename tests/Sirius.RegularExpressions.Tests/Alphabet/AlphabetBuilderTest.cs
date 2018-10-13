@@ -27,7 +27,7 @@ namespace Sirius.RegularExpressions.Alphabet {
 			this.output.WriteLine("");
 			this.output.WriteLine("{0} regex:", typeof(TLetter).Name);
 			this.output.WriteLine(regex.ToString());
-			builder = new AlphabetBuilder<TLetter>(regex, mapper.Negate, eof, validRanges);
+			builder = new AlphabetBuilder<TLetter>(regex, eof, validRanges);
 			this.output.WriteLine("");
 			this.output.WriteLine("Generated letter mapping:");
 			foreach (var pair in builder.AlphabetById) {
@@ -72,7 +72,7 @@ namespace Sirius.RegularExpressions.Alphabet {
 		[InlineData(@"[a-z0-9äöü]|Test", 6, false, true, new[] {2, 5, 3, 4, 5}, new[] {'Ä', 'T', 'E', 'S', 'T'})]
 		[InlineData(@"[a-z0-9äöü]|Test", 7, true, true, new[] {2, 3, 4, 5, 6}, new[] {'ä', 'T', 'e', 's', 't'})]
 		[InlineData(@"[a-z0-9]", 3, false, false, new[] {2, 2, 2, 2, 1}, new[] {'0', '9', 'A', 'Z', '?'})]
-		[InlineData(@"\U0001F78B", 4, false, true, new[] {1, 2, 3}, new[] {' ', '\ud83d', '\udf8b'})]
+		[InlineData(@"\U0001F78B", 4, false, true, new[] {1, 2, 3}, new[] {' ', '\uD83D', '\uDF8B'})]
 		public void Utf16Test(string regex, int expectedLetterCount, bool caseSensitive, bool eof, int[] expectLetterIds, char[] testChars) {
 			Debug.Assert(expectLetterIds.Length == testChars.Length);
 			AlphabetBuilder<char> builder;

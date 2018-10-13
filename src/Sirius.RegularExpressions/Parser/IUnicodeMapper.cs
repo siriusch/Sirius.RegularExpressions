@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Sirius.Collections;
 using Sirius.RegularExpressions.Invariant;
@@ -11,6 +11,8 @@ namespace Sirius.RegularExpressions.Parser {
 
 		RxNode<TLetter> MapGrapheme(Grapheme grapheme, bool caseSensitive);
 
-		RangeSet<TLetter> Negate(RangeSet<TLetter> letters);
+		RangeSet<TLetter> ValidLetters {
+			get;
+		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -22,19 +22,32 @@ namespace Sirius.RegularExpressions.Parser {
 			return result;
 		}
 
-		private readonly  bool generateVariations;
-		private readonly  bool includeKForm;
+		private readonly bool generateVariations;
+		private readonly bool includeKForm;
 
 		public UnicodeMapperBase(bool includeKForm, bool generateVariations) {
 			this.includeKForm = includeKForm;
 			this.generateVariations = generateVariations;
 		}
 
-		protected abstract RangeSet<TLetter> ValidLetters {
+		public abstract RangeSet<TLetter> ValidLetters {
 			get;
 		}
 
-		public abstract RxNode<TLetter> MapCodepoints(bool negate, RangeSet<Codepoint> codepointRanges, bool caseSensitive);
+		public RxNode<TLetter> MapCodepoints(bool negate, RangeSet<Codepoint> codepointRanges, bool caseSensitive) {
+			if (!caseSensitive) {
+				codepointRanges = new RangeSet<Codepoint>(codepointRanges.Expand().SelectMany(this.GenerateCaseInsensitiveCodepoints).Condense());
+			}
+			if (negate) {
+				codepointRanges = Codepoints.Valid - codepointRanges;
+			}
+			if (codepointRanges.Count == 0) {
+				return RxEmpty<TLetter>.Default;
+			}
+			return MapCodepoints(codepointRanges);
+		}
+
+		protected abstract RxNode<TLetter> MapCodepoints(RangeSet<Codepoint> codepointRanges);
 
 		public RxNode<TLetter> MapGrapheme(Grapheme grapheme, bool caseSensitive) {
 			var singleCodepoints = new HashSet<TLetter>();
@@ -48,32 +61,15 @@ namespace Sirius.RegularExpressions.Parser {
 				}
 			}
 			return compoundCodepoints
-				.Select(l => l.Select(c => new RxMatch<TLetter>(false, c)).JoinConcatenation())
-				.Append(new RxMatch<TLetter>(false, singleCodepoints))
+				.Select(l => l.Select(c => new RxMatch<TLetter>(c)).JoinConcatenation())
+				.Append(new RxMatch<TLetter>(singleCodepoints))
 				.JoinAlternation();
-		}
-
-		public RangeSet<TLetter> Negate(RangeSet<TLetter> letters) {
-			return RangeSet<TLetter>.Subtract(this.ValidLetters, letters);
-		}
-
-		public RangeSet<TLetter> Process(RangeSet<TLetter> letters, bool negate) {
-			return negate ? this.Negate(letters) : letters;
-		}
-
-		protected IEnumerable<Codepoint> ExpandCodepoints(RangeSet<Codepoint> codepointRanges, bool caseSensitive) {
-			var codepoints = codepointRanges.Expand();
-			if (!caseSensitive) {
-				codepoints = codepoints.SelectMany(this.GenerateCaseInsensitiveCodepoints);
-			}
-			var enumerable = codepoints.Where(Codepoint.IsValid);
-			return enumerable;
 		}
 
 		protected IEnumerable<Codepoint[]> GenerateCasedNormalizationCodepointVariations(Grapheme grapheme, bool caseSensitive) {
 			return caseSensitive
 					? this.GenerateNormalizationCodepointVariations(grapheme)
-					: Enumerable.Concat<Codepoint[]>(this.GenerateNormalizationCodepointVariations(grapheme.ToLowerInvariant()), this.GenerateNormalizationCodepointVariations(grapheme.ToUpperInvariant()));
+					: this.GenerateNormalizationCodepointVariations(grapheme.ToLowerInvariant()).Concat(this.GenerateNormalizationCodepointVariations(grapheme.ToUpperInvariant()));
 		}
 
 		protected abstract IEnumerable<TLetter[]> GenerateCasedNormalizationLetterVariations(Grapheme grapheme, bool caseSensitive);

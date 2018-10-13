@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 
 namespace Sirius.RegularExpressions.Invariant {
 	public abstract class RxBinaryNode<TLetter>: RxNode<TLetter>
-			where TLetter: IEquatable<TLetter> {
+			where TLetter: IEquatable<TLetter>, IComparable<TLetter> {
 		protected RxBinaryNode(RxNode<TLetter> left, RxNode<TLetter> right) {
 			this.Left = left;
 			this.Right = right;

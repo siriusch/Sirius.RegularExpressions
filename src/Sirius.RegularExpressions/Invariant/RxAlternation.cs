@@ -4,7 +4,7 @@ using Sirius.Text;
 
 namespace Sirius.RegularExpressions.Invariant {
 	public sealed class RxAlternation<TLetter>: RxBinaryNode<TLetter>
-			where TLetter: IEquatable<TLetter> {
+			where TLetter: IEquatable<TLetter>, IComparable<TLetter> {
 		public RxAlternation(RxNode<TLetter> left, RxNode<TLetter> right): base(left, right) { }
 
 		internal override int EvaluationPrecedence => 2;

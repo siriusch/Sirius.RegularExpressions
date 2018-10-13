@@ -48,7 +48,7 @@ namespace Sirius.RegularExpressions.Automata {
 			RegexExpression r = new RegexAlternation(r1, r2);
 			var mapper = new UnicodeCodepointMapper(false, false);
 			var rxCodepoint = r.ToInvariant(mapper, new UnicodeCharSetProvider(), true);
-			var nfa = NfaBuilder<Codepoint>.Build(rxCodepoint.Optimize(), mapper.Negate);
+			var nfa = NfaBuilder<Codepoint>.Build(rxCodepoint.Optimize());
 			NfaFactoryTest.WriteDiagram(this.output, nfa);
 			var dfa = DfaBuilder<Codepoint>.Build(nfa, Codepoints.EOF);
 			WriteDiagram(this.output, dfa);
@@ -97,7 +97,7 @@ namespace Sirius.RegularExpressions.Automata {
 			var expression = RegexParser.Parse(regex, 0, false);
 			var mapper = new UnicodeCodepointMapper(false, false);
 			var rxCodepoint = expression.ToInvariant(mapper, new UnicodeCharSetProvider(), caseSensitive);
-			var nfa = NfaBuilder<Codepoint>.Build(rxCodepoint.Optimize(), mapper.Negate);
+			var nfa = NfaBuilder<Codepoint>.Build(rxCodepoint.Optimize());
 			var dfa = DfaBuilder<Codepoint>.Build(nfa, Codepoints.EOF);
 			NfaFactoryTest.WriteDiagram(this.output, nfa);
 			WriteDiagram(this.output, dfa);
@@ -115,7 +115,7 @@ namespace Sirius.RegularExpressions.Automata {
 			var expression = RegexParser.Parse(regex, 0);
 			var mapper = new UnicodeUtf8Mapper(false, false);
 			var rxCodepoint = expression.ToInvariant(mapper, new UnicodeCharSetProvider(), caseSensitive);
-			var nfa = NfaBuilder<byte>.Build(rxCodepoint.Optimize(), mapper.Negate);
+			var nfa = NfaBuilder<byte>.Build(rxCodepoint.Optimize());
 			var dfa = DfaBuilder<byte>.Build(nfa, 0xFF);
 			NfaFactoryTest.WriteDiagram(this.output, nfa);
 			WriteDiagram(this.output, dfa);
@@ -144,6 +144,7 @@ namespace Sirius.RegularExpressions.Automata {
 		[InlineData(@"(a|b)+", false, "aabaabbabaa", true)]
 		[InlineData(@"(a{2,}|b)+", false, "aabaabbabaa", false)]
 		[InlineData(@"(a{2,}|b)+", false, "aabaabbbaabaa", true)]
+		[InlineData(@"[\p{L}_][\p{L}_0-9]*", false, "aabaa_2342äöü", true)]
 		[InlineData(@"\[(^)?((\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^PpuxDdWwSs])|[^\\\]])-(\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^PpuxDdWwSs])|[^\\\]])|(\\([Pp](\p{L}|\{[^\}]+\})|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^Ppux])|[^\\\]]))*\]", false, @"w", false)]
 		[InlineData(@"\[(^)?((\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^PpuxDdWwSs])|[^\\\]])-(\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^PpuxDdWwSs])|[^\\\]])|(\\([Pp](\p{L}|\{[^\}]+\})|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^Ppux])|[^\\\]]))*\]", false, @"[a-z]", true)]
 		[InlineData(@"\[(^)?((\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^PpuxDdWwSs])|[^\\\]])-(\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^PpuxDdWwSs])|[^\\\]])|(\\([Pp](\p{L}|\{[^\}]+\})|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^Ppux])|[^\\\]]))*\]", false, @"[\da-z$]", true)]
@@ -154,12 +155,12 @@ namespace Sirius.RegularExpressions.Automata {
 		[InlineData(@"\[(^)?((\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^PpuxDdWwSs])|[^\\\]])-(\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^PpuxDdWwSs])|[^\\\]])|(\\([Pp](\p{L}|\{[^\}]+\})|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^Ppux])|[^\\\]]))*\]", false, @"[\p{L}]", true)]
 		[InlineData(@"\[(^)?((\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^PpuxDdWwSs])|[^\\\]])-(\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^PpuxDdWwSs])|[^\\\]])|(\\([Pp](\p{L}|\{[^\}]+\})|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^Ppux])|[^\\\]]))*\]", false, @"[\P{L}]", true)]
 		[InlineData(@"\[(^)?((\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^PpuxDdWwSs])|[^\\\]])-(\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^PpuxDdWwSs])|[^\\\]])|(\\([Pp](\p{L}|\{[^\}]+\})|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|[^Ppux])|[^\\\]]))*\]", false,
-			@"[\\sa,fmhsadf,nb,sfa-s-dafgsdgfasg-a--sadgasdgsadfalkjwerkjhegfkasflkjasf]", true)]
+				@"[\\sa,fmhsadf,nb,sfa-s-dafgsdgfasg-a--sadgasdgsadfalkjwerkjhegfkasflkjasf]", true)]
 		public void MatchTest(string regex, bool caseSensitive, string input, bool match) {
 			var expression = RegexParser.Parse(regex, 0);
 			var mapper = new UnicodeCodepointMapper(false, false);
 			var rxCodepoint = expression.ToInvariant(mapper, new UnicodeCharSetProvider(), caseSensitive);
-			var nfa = NfaBuilder<Codepoint>.Build(rxCodepoint.Optimize(), mapper.Negate);
+			var nfa = NfaBuilder<Codepoint>.Build(rxCodepoint.Optimize());
 			var dfa = DfaBuilder<Codepoint>.Build(nfa, Codepoints.EOF);
 			var state = dfa.StartState;
 			foreach (var codepoint in input.ToCodepoints().Append(Codepoints.EOF)) {
@@ -178,17 +179,17 @@ namespace Sirius.RegularExpressions.Automata {
 		}
 
 		[Theory]
-		[InlineData(@"arsène", false, new byte[] { 65, 114, 115, 101, 204, 128, 110, 101 }, true)]
-		[InlineData(@"arsène", false, new byte[] { 65, 114, 115, 195, 168, 110, 101 }, true)]
-		[InlineData(@"arsène", true, new byte[] { 65, 114, 115, 195, 168, 110, 101 }, false)]
-		[InlineData(@"[^a]+", false, new byte[] { 65 }, false)]
-		[InlineData(@"[^a]+", true, new byte[] { 65 }, true)]
+		[InlineData(@"arsène", false, new byte[] {65, 114, 115, 101, 204, 128, 110, 101}, true)]
+		[InlineData(@"arsène", false, new byte[] {65, 114, 115, 195, 168, 110, 101}, true)]
+		[InlineData(@"arsène", true, new byte[] {65, 114, 115, 195, 168, 110, 101}, false)]
+		[InlineData(@"[^a]+", false, new byte[] {65}, false)]
+		[InlineData(@"[^a]+", true, new byte[] {65}, true)]
 		public void MatchTestUtf8(string regex, bool caseSensitive, byte[] input, bool match) {
 			this.output.WriteLine(Encoding.UTF8.GetString(input));
 			var expression = RegexParser.Parse(regex, 0);
 			var mapper = new UnicodeUtf8Mapper(false, false);
 			var rxCodepoint = expression.ToInvariant(mapper, new UnicodeCharSetProvider(), caseSensitive);
-			var nfa = NfaBuilder<byte>.Build(rxCodepoint.Optimize(), mapper.Negate);
+			var nfa = NfaBuilder<byte>.Build(rxCodepoint.Optimize());
 			var dfa = DfaBuilder<byte>.Build(nfa, Utf8Bytes.EOF);
 			var state = dfa.StartState;
 			foreach (var inputByte in input.Append(Utf8Bytes.EOF)) {

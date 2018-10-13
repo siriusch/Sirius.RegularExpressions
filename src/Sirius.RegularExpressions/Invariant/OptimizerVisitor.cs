@@ -6,25 +6,24 @@ using Sirius.Collections;
 
 namespace Sirius.RegularExpressions.Invariant {
 	internal class OptimizerVisitor<TLetter>: IRegexVisitor<TLetter, object, RxNode<TLetter>>
-			where TLetter: IEquatable<TLetter> {
+			where TLetter: IEquatable<TLetter>, IComparable<TLetter> {
 		public RxNode<TLetter> Accept(RxAccept<TLetter> node, object context) {
 			return new RxAccept<TLetter>(node.Inner.Visit(this, context), node.Symbol, node.AcceptPrecedence);
 		}
 
 		public RxNode<TLetter> Alternation(RxAlternation<TLetter> node, object context) {
-			var single = new HashSet<TLetter>();
+			var single = RangeSet<TLetter>.Empty;
 			var other = new HashSet<RxNode<TLetter>>();
 			foreach (var alternationNode in node.VisitBinary<TLetter, RxAlternation<TLetter>, object, RxNode<TLetter>>(this, context)) {
-				var matchNode = alternationNode as RxMatch<TLetter>;
-				if ((matchNode != null) && !matchNode.Negate) {
-					single.UnionWith(matchNode.Letters);
+				if (alternationNode is RxMatch<TLetter> matchNode) {
+					single = single | matchNode.Letters;
 				} else {
 					other.Add(alternationNode);
 				}
 			}
 			IEnumerable<RxNode<TLetter>> result = other;
 			if (single.Count > 0) {
-				result = result.Append(new RxMatch<TLetter>(false, single));
+				result = result.Append(new RxMatch<TLetter>(single));
 			}
 			return result.JoinAlternation();
 		}

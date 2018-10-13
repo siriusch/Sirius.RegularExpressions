@@ -36,8 +36,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Sirius.Common, Version=1.0.5.31307, Culture=neutral, PublicKeyToken=3d58c5c8efc41aa9, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Sirius.Common.1.0.5\lib\net461\Sirius.Common.dll</HintPath>
+    <Reference Include="Sirius.Common, Version=1.0.7.29002, Culture=neutral, PublicKeyToken=3d58c5c8efc41aa9, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Sirius.Common.1.0.7\lib\net461\Sirius.Common.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -87,6 +87,7 @@
     <Compile Include="Lexer.cs" />
     <Compile Include="LexerBase.cs" />
     <Compile Include="LexerBuilder.cs" />
+    <Compile Include="LexerExtensions.cs" />
     <Compile Include="Parser\AcceptDeepVisitor.cs" />
     <Compile Include="Parser\CharSetClass.cs" />
     <Compile Include="Parser\CharSetProviderBase.cs" />
