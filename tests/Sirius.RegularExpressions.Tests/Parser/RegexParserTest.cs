@@ -35,10 +35,10 @@ namespace Sirius.RegularExpressions.Parser {
 		[InlineData(4, @"a")]
 		public void RegexAcceptPrecedence(int expectedSymbol, string test) {
 			var foundSymbol = default(SymbolId?);
-			new Lexer<Codepoint>(acceptPrecedenceDfa.Value, (symbol, codepoints, index) => {
+			new Lexer<Codepoint>(acceptPrecedenceDfa.Value, (symbol, capture) => {
 				if (symbol != SymbolId.Eof) {
 					foundSymbol = symbol;
-					this.output.WriteLine("{0} @ {1} => {2}", symbol, index, codepoints.AsString());
+					this.output.WriteLine("{0} @ {1} => {2}", symbol, capture.Index, capture.AsString());
 				}
 			}).Push(test.ToCodepoints().Append(Codepoints.EOF));
 			Assert.Equal<SymbolId>(expectedSymbol, foundSymbol.Value);

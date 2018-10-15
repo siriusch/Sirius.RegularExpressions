@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 
+using Sirius.Collections;
 using Sirius.RegularExpressions.Automata;
 
 namespace Sirius.RegularExpressions {
 	public class Lexer<TLetter>: LexerBase<TLetter, TLetter> where TLetter: struct, IComparable<TLetter> {
 		private readonly Dfa<TLetter> dfa;
 
-		public Lexer(Dfa<TLetter> dfa, Action<SymbolId, IEnumerable<TLetter>, long> tokenAction, params SymbolId[] symbolsToIgnore): base(dfa.StartState.Id, dfa.Eof.HasValue, SymbolId.Eof, tokenAction, symbolsToIgnore) {
+		public Lexer(Dfa<TLetter> dfa, Action<SymbolId, Capture<TLetter>> tokenAction, params SymbolId[] symbolsToIgnore): base(dfa.StartState.Id, dfa.Eof.HasValue, SymbolId.Eof, tokenAction, symbolsToIgnore) {
 			this.dfa = dfa;
 		}
 
@@ -22,7 +23,7 @@ namespace Sirius.RegularExpressions {
 			where TLetter : struct, IComparable<TLetter>, IEquatable<TLetter> {
 		private readonly DfaStateMachine<TLetter, TInput> stateMachine;
 
-		public Lexer(DfaStateMachine<TLetter, TInput> stateMachine, Id<DfaState<TLetter>> startStateId, bool handleEof, Action<SymbolId, IEnumerable<TInput>, long> tokenAction, params SymbolId[] symbolsToIgnore) : base(startStateId, handleEof, SymbolId.Eof, tokenAction, symbolsToIgnore) {
+		public Lexer(DfaStateMachine<TLetter, TInput> stateMachine, Id<DfaState<TLetter>> startStateId, bool handleEof, Action<SymbolId, Capture<TInput>> tokenAction, params SymbolId[] symbolsToIgnore) : base(startStateId, handleEof, SymbolId.Eof, tokenAction, symbolsToIgnore) {
 			this.stateMachine = stateMachine;
 		}
 

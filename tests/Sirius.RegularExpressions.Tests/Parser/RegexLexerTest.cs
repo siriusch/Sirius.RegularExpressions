@@ -50,7 +50,7 @@ namespace Sirius.RegularExpressions.Parser {
 
 		[Fact]
 		public void RegexTokenize() {
-			var rx = RegexLexer.Create((symbol, data, index) => this.output.WriteLine("{0}({1}): {2}", symbol.ToString(RegexLexer.SymbolNameResolver), index, data.AsString()));
+			var rx = RegexLexer.Create((symbol, capture) => this.output.WriteLine("{0}({1}): {2}", symbol.ToString(RegexLexer.SymbolNameResolver), capture.Index, capture.AsString()));
 			rx.Push(@"this\sis\sa\stest".Append(Utf16Chars.EOF));
 		}
 	}

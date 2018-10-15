@@ -51,8 +51,8 @@
     <Reference Include="Moq, Version=4.10.0.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Moq.4.10.0\lib\net45\Moq.dll</HintPath>
     </Reference>
-    <Reference Include="Sirius.Common, Version=1.0.7.29002, Culture=neutral, PublicKeyToken=3d58c5c8efc41aa9, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Sirius.Common.1.0.7\lib\net461\Sirius.Common.dll</HintPath>
+    <Reference Include="Sirius.Common, Version=1.0.8.28277, Culture=neutral, PublicKeyToken=3d58c5c8efc41aa9, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Sirius.Common.1.0.8\lib\net461\Sirius.Common.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

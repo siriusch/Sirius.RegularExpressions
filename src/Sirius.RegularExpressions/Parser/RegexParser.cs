@@ -6,18 +6,14 @@ using Sirius.Unicode;
 
 namespace Sirius.RegularExpressions.Parser {
 	public class RegexParser {
-		public bool IgnorePatternWhitespace {
-			get;
-		}
-
 		private class RegexGroup {
-			private readonly RegexGroup parent;
 			private readonly bool? caseSensitive;
+			private readonly RegexGroup parent;
 			private RegexExpression alternate;
 			private RegexExpression current;
 			private RegexExpression pending;
 
-			public RegexGroup(RegexGroup parent, bool? caseSensitive=null) {
+			public RegexGroup(RegexGroup parent, bool? caseSensitive = null) {
 				this.parent = parent;
 				this.caseSensitive = caseSensitive;
 				this.current = RegexNoOp.Default;
@@ -49,7 +45,7 @@ namespace Sirius.RegularExpressions.Parser {
 			}
 
 			public RegexExpression Flush() {
-				AppendExpression(null);
+				this.AppendExpression(null);
 				var expression = this.alternate != null ? RegexAlternation.Create(this.alternate, this.current) : this.current;
 				if (this.caseSensitive.HasValue) {
 					return this.caseSensitive.Value ? RegexCaseGroup.CreateSensitive(expression) : RegexCaseGroup.CreateInsensitive(expression);
@@ -62,12 +58,12 @@ namespace Sirius.RegularExpressions.Parser {
 					throw new InvalidOperationException("Qualifier is not valid at this place");
 				}
 				this.pending = RegexQuantified.Create(this.pending, quantifier);
-				AppendExpression(null);
+				this.AppendExpression(null);
 			}
 		}
 
-		public static RegexExpression Parse(string regex, SymbolId? acceptSymbol, bool ignorePatternWhitespace = true) {
-			var state = new RegexParser(null, ignorePatternWhitespace);
+		public static RegexExpression Parse(string regex, SymbolId? acceptSymbol, bool ignorePatternWhitespace = true, bool breakOnSlash = false) {
+			var state = new RegexParser(null, ignorePatternWhitespace, breakOnSlash);
 			RegexLexer.Create(state.ProcessTerminal).Push(regex.Append(Utf16Chars.EOF));
 			var result = state.Flush();
 			return acceptSymbol.HasValue ? RegexAccept.Create(result, acceptSymbol.Value) : result;
@@ -76,36 +72,51 @@ namespace Sirius.RegularExpressions.Parser {
 		private readonly Action<RegexExpression> parseCallback;
 		private RegexGroup currentGroup;
 
-		public RegexParser(Action<RegexExpression> parseCallback = null, bool ignorePatternWhitespace = true) {
+		public RegexParser(Action<RegexExpression> parseCallback = null, bool ignorePatternWhitespace = true, bool breakOnSlash = false) {
 			this.IgnorePatternWhitespace = ignorePatternWhitespace;
+			this.BreakOnSlash = breakOnSlash;
 			this.parseCallback = parseCallback;
 			this.currentGroup = new RegexGroup(null);
+		}
+
+		public bool IgnorePatternWhitespace {
+			get;
+		}
+
+		public bool BreakOnSlash {
+			get;
 		}
 
 		public RegexExpression Flush() {
 			return this.currentGroup.Flush();
 		}
 
-		private void ProcessTerminal(SymbolId symbol, IEnumerable<char> data, long index) {
+		private void ProcessTerminal(SymbolId symbol, Capture<char> capture) {
 			switch ((int)symbol) {
 			case RegexLexer.SymWhitespace:
 				if (!this.IgnorePatternWhitespace) {
-					foreach (var ch in data) {
+					foreach (var ch in capture) {
 						this.currentGroup.AppendExpression(RegexMatchSet.FromChars(ch));
 					}
 				}
 				break;
+			case RegexLexer.SymSlash:
+				if (this.BreakOnSlash) {
+					goto case int.MinValue; // EOF
+				}
+				this.currentGroup.AppendExpression(RegexMatchSet.FromCodepoints('/'));
+				break;
 			case RegexLexer.SymCharset:
-				this.currentGroup.AppendExpression(RegexMatchSet.FromNamedCharset(data.AsString()));
+				this.currentGroup.AppendExpression(RegexMatchSet.FromNamedCharset(capture.AsString()));
 				break;
 			case RegexLexer.SymRegexLetter:
-				this.currentGroup.AppendExpression(RegexMatchGrapheme.Create(data.AsString()));
+				this.currentGroup.AppendExpression(RegexMatchGrapheme.Create(capture.AsString()));
 				break;
 			case RegexLexer.SymRegexEscape:
-				this.currentGroup.AppendExpression(RegexMatchSet.FromEscape(data.AsString()));
+				this.currentGroup.AppendExpression(RegexMatchSet.FromEscape(capture.AsString()));
 				break;
 			case RegexLexer.SymRegexCharset:
-				this.currentGroup.AppendExpression(RegexMatchSet.FromSet(data.AsString()));
+				this.currentGroup.AppendExpression(RegexMatchSet.FromSet(capture.AsString()));
 				break;
 			case RegexLexer.SymRegexDot:
 				this.currentGroup.AppendExpression(RegexMatchSet.Dot());
@@ -120,7 +131,7 @@ namespace Sirius.RegularExpressions.Parser {
 				this.currentGroup.Quantify(RegexQuantifier.Optional());
 				break;
 			case RegexLexer.SymQuantifyRepeat:
-				this.currentGroup.Quantify(RegexQuantifier.Repeat(data.AsString()));
+				this.currentGroup.Quantify(RegexQuantifier.Repeat(capture.AsString()));
 				break;
 			case RegexLexer.SymAlternate:
 				this.currentGroup.Alternate();
@@ -144,9 +155,8 @@ namespace Sirius.RegularExpressions.Parser {
 				this.parseCallback?.Invoke(this.Flush());
 				break;
 			default:
-				throw new NotSupportedException("Unexpected symbol at index "+index);
+				throw new NotSupportedException("Unexpected symbol at index " + capture.Index);
 			}
 		}
-
 	}
 }

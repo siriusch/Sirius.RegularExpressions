@@ -8,7 +8,7 @@ using System.Reflection;
 using Sirius.Collections;
 
 namespace Sirius.RegularExpressions.Alphabet {
-	internal class AlphabetMapperEmitter<TLetter>
+	public class AlphabetMapperEmitter<TLetter>
 			where TLetter: struct, IComparable<TLetter>, IEquatable<TLetter> {
 		private static readonly bool IsOperatorComparable = typeof(TLetter).IsPrimitive && (typeof(TLetter) != typeof(bool));
 		private static readonly MethodInfo IComparable_CompareTo = Reflect<IComparable<TLetter>>.GetMethod(i => i.CompareTo(default(TLetter)));

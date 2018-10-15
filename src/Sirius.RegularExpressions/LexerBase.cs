@@ -11,18 +11,18 @@ namespace Sirius.RegularExpressions {
 			where TInput: struct, IComparable<TInput>
 			where TLetter: struct, IComparable<TLetter> {
 		private readonly bool handleEof;
-		private Id<DfaState<TLetter>> state;
 		private LinkedFifoBuffer<TInput> buffer;
 		private LinkedFifoBuffer<TInput>.BufferPosition bufferPosition;
+		private Id<DfaState<TLetter>> state;
 		private LinkedFifoBuffer<TInput>.BufferPosition tokenEnd;
 		private LinkedFifoBuffer<TInput>.BufferPosition tokenStart;
 		private SymbolId? tokenSymbol;
 
-		protected LexerBase(Id<DfaState<TLetter>> startStateId, bool handleEof, SymbolId eof, Action<SymbolId, IEnumerable<TInput>, long> tokenAction, params SymbolId[] symbolsToIgnore) {
+		protected LexerBase(Id<DfaState<TLetter>> startStateId, bool handleEof, SymbolId eof, Action<SymbolId, Capture<TInput>> tokenAction, params SymbolId[] symbolsToIgnore) {
 			this.handleEof = handleEof;
 			this.StartStateId = startStateId;
 			this.Eof = eof;
-			this.TokenAction = tokenAction ?? ((s, t, o) => { });
+			this.TokenAction = tokenAction ?? ((s, c) => { });
 			this.SymbolsToIgnore = new HashSet<SymbolId>(symbolsToIgnore ?? new SymbolId[0]);
 		}
 
@@ -40,7 +40,7 @@ namespace Sirius.RegularExpressions {
 			get;
 		}
 
-		protected Action<SymbolId, IEnumerable<TInput>, long> TokenAction {
+		protected Action<SymbolId, Capture<TInput>> TokenAction {
 			get;
 		}
 
@@ -53,7 +53,7 @@ namespace Sirius.RegularExpressions {
 
 		private void FlushPendingToken() {
 			Debug.Assert(this.tokenSymbol.HasValue);
-			this.ProcessToken(this.tokenSymbol.Value, this.tokenStart.Take((int)(this.tokenEnd.Offset - this.tokenStart.Offset)), this.tokenStart.Offset, this.tokenEnd);
+			this.ProcessToken(this.tokenSymbol.Value, new Capture<TInput>(this.tokenStart, (int)(this.tokenEnd.Offset - this.tokenStart.Offset), this.tokenStart.Offset), this.tokenEnd);
 		}
 
 		protected virtual void HandleLexicalError(bool flushing) {
@@ -88,14 +88,14 @@ namespace Sirius.RegularExpressions {
 		}
 
 		protected virtual void ProcessEof() {
-			this.TokenAction(this.Eof, Enumerable.Empty<TInput>(), this.bufferPosition.Offset-1);
+			this.TokenAction(this.Eof, new Capture<TInput>(Enumerable.Empty<TInput>(), 0, this.bufferPosition.Offset - 1));
 		}
 
 		protected abstract SymbolId? ProcessStateMachine(ref Id<DfaState<TLetter>> state, TInput input);
 
-		protected virtual void ProcessToken(SymbolId symbol, IEnumerable<TInput> data, long offset, LinkedFifoBuffer<TInput>.BufferPosition tokenEnd) {
+		protected virtual void ProcessToken(SymbolId symbol, Capture<TInput> data, LinkedFifoBuffer<TInput>.BufferPosition tokenEnd) {
 			if (!this.SymbolsToIgnore.Contains(symbol)) {
-				this.TokenAction(symbol, data, offset);
+				this.TokenAction(symbol, data);
 			}
 			this.Reset(tokenEnd);
 		}
