@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Sirius.Collections;
 using Sirius.Unicode;
@@ -10,6 +10,6 @@ namespace Sirius.RegularExpressions.Parser {
 
 		RangeSet<TItem> GetRangeSet(RangeSetCategory category, string data);
 
-		RangeSet<TItem> Union(RangeSet<TItem> set1, RangeSet<TItem> set2);
+		RangeSet<TItem> Negate(RangeSet<TItem> set);
 	}
 }

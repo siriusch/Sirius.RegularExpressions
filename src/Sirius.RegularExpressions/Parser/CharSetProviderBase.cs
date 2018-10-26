@@ -25,8 +25,8 @@ namespace Sirius.RegularExpressions.Parser {
 			throw new ArgumentOutOfRangeException("category");
 		}
 
-		public RangeSet<Codepoint> Union(RangeSet<Codepoint> set1, RangeSet<Codepoint> set2) {
-			return RangeSet<Codepoint>.Intersection(Codepoints.Valid, RangeSet<Codepoint>.Union(set1, set2));
+		public RangeSet<Codepoint> Negate(RangeSet<Codepoint> set) {
+			return RangeSet<Codepoint>.Intersection(Codepoints.Valid, RangeSet<Codepoint>.Negate(set));
 		}
 
 		public abstract RangeSet<Codepoint> GetClassSet(CharSetClass cls);

@@ -211,15 +211,15 @@ namespace Sirius.RegularExpressions.Parser {
 			return factory.Value(tokenAction);
 		}
 
-		public static RxNode<TLetter> CreateRx<TLetter>(IUnicodeMapper<TLetter> mapper, bool caseSensitive = true)
+		public static RxNode<TLetter> CreateRx<TLetter>(IUnicodeMapper<TLetter> mapper)
 				where TLetter: IEquatable<TLetter>, IComparable<TLetter> {
 			var provider = new UnicodeCharSetProvider(CreateNamedSets());
-			return CreateTokenRegex().ToInvariant(mapper, provider, caseSensitive);
+			return CreateTokenRegex().ToInvariant(mapper, provider, true);
 		}
 
 		internal static void CreateStateMachine(out Expression<DfaStateMachine<LetterId, char>> stateMachine, out int startStateId) {
 			var mapper = new UnicodeUtf16Mapper(false, false);
-			var charRx = CreateRx(mapper, true);
+			var charRx = CreateRx(mapper);
 			var alpha = new AlphabetBuilder<char>(charRx, Utf16Chars.EOF, Utf16Chars.ValidBmp);
 			var charToLetter = AlphabetMapperEmitter<char>.CreateExpression(alpha);
 			var nfa = NfaBuilder<LetterId>.Build(alpha.Expression);

@@ -11,14 +11,7 @@ namespace Sirius.RegularExpressions.Parser {
 	public class RegexMatchSet: RegexExpression {
 		private static readonly Regex rxEscape = new Regex(@"^\\((?<c>[Pp])((?<name>\p{L})|\{(?<name>[^\}]+)\})|x(?<hex>[0-9A-Fa-f]{2})|u(?<hex>[0-9A-Fa-f]{4})|U(?<hex>[0-9A-Fa-f]{8})|(?<c>[^Ppux]))$", RegexOptions.CultureInvariant|RegexOptions.ExplicitCapture|RegexOptions.Singleline);
 		private static readonly Regex rxNamed = new Regex(@"^\{\s*(?<name>.+)\s*\}$", RegexOptions.CultureInvariant|RegexOptions.ExplicitCapture|RegexOptions.Singleline);
-
-		private static readonly Regex rxSet = new Regex(
-			@"^\[(?<neg>\^)?((?<from>\\([Pp](\p{L}|\{[^\}]+\})|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8}|[^Ppux])|[^\\\]\p{M}*])-(?<to>\\([Pp](\p{L}|\{[^\}]+\})|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8}|[^Ppux])|[^\\\]\p{M}*])|(?<letter>\\([Pp](\p{L}|\{[^\}]+\})|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8}|[^Ppux])|[^\\\]\p{M}*]))*\]$",
-			RegexOptions.CultureInvariant|RegexOptions.ExplicitCapture|RegexOptions.Singleline);
-
-		private static bool EqualsInternal(RegexMatchSet x, RegexMatchSet y) {
-			return Equals(x.Handle, y.Handle);
-		}
+		private static readonly Regex rxSet = new Regex(@"^\[(?<neg>\^)?((?<from>\\([Pp](\p{L}|\{[^\}]+\})|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8}|[^Ppux])|[^\\\]\p{M}*])-(?<to>\\([Pp](\p{L}|\{[^\}]+\})|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8}|[^Ppux])|[^\\\]\p{M}*])|(?<letter>\\([Pp](\p{L}|\{[^\}]+\})|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8}|[^Ppux])|[^\\\]\p{M}*]))*\]$", RegexOptions.CultureInvariant|RegexOptions.ExplicitCapture|RegexOptions.Singleline);
 
 		public static RegexMatchSet FromClass(CharSetClass charSetClass) {
 			return new RegexMatchSet(".", new RangeSetHandle.Class(charSetClass, false));
@@ -33,11 +26,7 @@ namespace Sirius.RegularExpressions.Parser {
 		}
 
 		public static RegexMatchSet FromNamedCharset(string charset) {
-			var match = rxNamed.Match(charset);
-			if (!match.Success) {
-				throw new ArgumentException("Named charset format is invalid", "charset");
-			}
-			return new RegexMatchSet(charset, new RangeSetHandle.Named(match.Groups["name"].Value, false));
+			return new RegexMatchSet(charset, ParseNamedCharset(charset));
 		}
 
 		public static RegexMatchSet FromSet(string set) {
@@ -74,7 +63,15 @@ namespace Sirius.RegularExpressions.Parser {
 			return new RegexMatchSet($@"\{(negate ? 'P' : 'p')}{{{name}}}", new RangeSetHandle.Static(UnicodeRanges.FromUnicodeName(name), negate));
 		}
 
-		internal static RangeSetHandle ParseEscape(string escape) {
+		public static RangeSetHandle ParseNamedCharset(string charset) {
+			var match = rxNamed.Match(charset);
+			if (!match.Success) {
+				throw new ArgumentException("Named charset format is invalid", "charset");
+			}
+			return new RangeSetHandle.Named(match.Groups["name"].Value, false);
+		}
+
+		public static RangeSetHandle ParseEscape(string escape) {
 			var match = rxEscape.Match(escape);
 			if (!match.Success) {
 				throw new ArgumentException("Escape is invalid", "escape");
@@ -123,16 +120,15 @@ namespace Sirius.RegularExpressions.Parser {
 			}
 		}
 
-		private static Codepoint ParseSingleLetter(string letter) {
+		public static Codepoint ParseSingleLetter(string letter) {
 			if (letter[0] == '\\') {
 				var handle = ParseEscape(letter) as RangeSetHandle.Static;
-				Codepoint result;
-				if ((handle == null) || !handle.TryGetSingle(out result)) {
+				if ((handle == null) || !handle.TryGetSingle(out var result)) {
 					throw new InvalidOperationException("A single character was expected, but a character class was found");
 				}
 				return result;
 			}
-			return letter.Single();
+			return Codepoint.FromChars(letter);
 		}
 
 		public RegexMatchSet(string text, RangeSetHandle handle) {

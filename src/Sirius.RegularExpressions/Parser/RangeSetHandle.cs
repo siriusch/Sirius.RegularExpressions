@@ -121,7 +121,7 @@ namespace Sirius.RegularExpressions.Parser {
 				var result = RangeSet<T>.Empty;
 				foreach (var handle in this.handles) {
 					var set = handle.GetCharSet(provider);
-					result = provider.Union(result, handle.Negate ? RangeSet<T>.Negate(set) : set);
+					result = RangeSet<T>.Union(result, handle.Negate ? provider.Negate(set) : set);
 				}
 				return result;
 			}
