@@ -52,13 +52,13 @@ namespace Sirius.RegularExpressions {
 			var regex = this.ComputeRx();
 			alphabet = new AlphabetBuilder<TLetter>(regex, this.eof, validRanges);
 			var nfa = NfaBuilder<LetterId>.Build(alphabet.Expression);
-			return DfaBuilder<LetterId>.Build(nfa, LetterId.Eof);
+			return DfaBuilder<LetterId>.Build(nfa, LetterId.Eof, true);
 		}
 
 		public Dfa<TLetter> ComputeDfa() {
 			var regex = this.ComputeRx();
 			var nfa = NfaBuilder<TLetter>.Build(regex);
-			return DfaBuilder<TLetter>.Build(nfa, this.eof);
+			return DfaBuilder<TLetter>.Build(nfa, this.eof, true);
 		}
 
 		private RxNode<TLetter> ComputeRx() {

@@ -223,7 +223,7 @@ namespace Sirius.RegularExpressions.Parser {
 			var alpha = new AlphabetBuilder<char>(charRx, Utf16Chars.EOF, Utf16Chars.ValidBmp);
 			var charToLetter = AlphabetMapperEmitter<char>.CreateExpression(alpha);
 			var nfa = NfaBuilder<LetterId>.Build(alpha.Expression);
-			var dfa = DfaBuilder<LetterId>.Build(nfa, LetterId.Eof);
+			var dfa = DfaBuilder<LetterId>.Build(nfa, LetterId.Eof, true);
 			stateMachine = DfaStateMachineEmitter.CreateExpression(dfa, charToLetter);
 			startStateId = dfa.StartState.Id.ToInt32();
 		}

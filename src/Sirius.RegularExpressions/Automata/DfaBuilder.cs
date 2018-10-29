@@ -9,7 +9,7 @@ using Sirius.Collections;
 namespace Sirius.RegularExpressions.Automata {
 	public static class DfaBuilder<TLetter>
 			where TLetter: struct, IComparable<TLetter>, IEquatable<TLetter> {
-		public static Dfa<TLetter> Build(INonFiniteAutomaton<TLetter> nfa, TLetter? eof = null, bool matchEmptyEof = true, Id<DfaState<TLetter>> firstId = default(Id<DfaState<TLetter>>)) {
+		public static Dfa<TLetter> Build(INonFiniteAutomaton<TLetter> nfa, TLetter? eof = null, bool matchEmptyEof = false, Id<DfaState<TLetter>> firstId = default(Id<DfaState<TLetter>>)) {
 			var dfaStates = new Dictionary<string, DfaStateBuilder<TLetter>>(StringComparer.Ordinal);
 			var result = new List<DfaState<TLetter>>();
 			// Step 1: compute the epsilon closure information for all NFA nodes
@@ -105,7 +105,7 @@ namespace Sirius.RegularExpressions.Automata {
 					}
 				}
 			} while (pending.Count > 0);
-			if (matchEmptyEof && eof.HasValue) {
+			if (matchEmptyEof && eof.HasValue && states[startDfaState].GetTransition(eof.Value) == Dfa<TLetter>.Reject) {
 				states[startDfaState].SetTransition(Range<TLetter>.Create(eof.Value), Dfa<TLetter>.Accept);
 			}
 			// Step 5: apply transitions
