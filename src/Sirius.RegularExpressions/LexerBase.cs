@@ -18,12 +18,10 @@ namespace Sirius.RegularExpressions {
 		private LinkedFifoBuffer<TInput>.BufferPosition tokenStart;
 		private SymbolId? tokenSymbol;
 
-		protected LexerBase(Id<DfaState<TLetter>> startStateId, bool handleEof, SymbolId eof, Action<SymbolId, Capture<TInput>> tokenAction, params SymbolId[] symbolsToIgnore) {
+		protected LexerBase(bool handleEof, SymbolId eof, Id<DfaState<TLetter>> startStateId) {
 			this.handleEof = handleEof;
 			this.StartStateId = startStateId;
 			this.Eof = eof;
-			this.TokenAction = tokenAction ?? ((s, c) => { });
-			this.SymbolsToIgnore = new HashSet<SymbolId>(symbolsToIgnore ?? new SymbolId[0]);
 		}
 
 		protected Id<DfaState<TLetter>> StartStateId {
@@ -36,13 +34,7 @@ namespace Sirius.RegularExpressions {
 			get;
 		}
 
-		protected IReadOnlyCollection<SymbolId> SymbolsToIgnore {
-			get;
-		}
-
-		protected Action<SymbolId, Capture<TInput>> TokenAction {
-			get;
-		}
+		protected abstract void TokenAction(SymbolId symbolId, Capture<TInput> value);
 
 		private void AssertBuffer() {
 			if (this.buffer == null) {
@@ -53,7 +45,8 @@ namespace Sirius.RegularExpressions {
 
 		private void FlushPendingToken() {
 			Debug.Assert(this.tokenSymbol.HasValue);
-			this.ProcessToken(this.tokenSymbol.Value, new Capture<TInput>(this.tokenStart, (int)(this.tokenEnd.Offset - this.tokenStart.Offset), this.tokenStart.Offset), this.tokenEnd);
+			this.TokenAction(this.tokenSymbol.Value, new Capture<TInput>(this.tokenStart, (int)(this.tokenEnd.Offset - this.tokenStart.Offset), this.tokenStart.Offset));
+			this.Reset(this.tokenEnd);
 		}
 
 		protected virtual void HandleLexicalError(bool flushing) {
@@ -92,13 +85,6 @@ namespace Sirius.RegularExpressions {
 		}
 
 		protected abstract SymbolId? ProcessStateMachine(ref Id<DfaState<TLetter>> state, TInput input);
-
-		protected virtual void ProcessToken(SymbolId symbol, Capture<TInput> data, LinkedFifoBuffer<TInput>.BufferPosition tokenEnd) {
-			if (!this.SymbolsToIgnore.Contains(symbol)) {
-				this.TokenAction(symbol, data);
-			}
-			this.Reset(tokenEnd);
-		}
 
 		public void Push(TInput letter) {
 			this.AssertBuffer();
