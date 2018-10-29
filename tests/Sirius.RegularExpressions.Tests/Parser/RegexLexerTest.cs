@@ -48,10 +48,13 @@ namespace Sirius.RegularExpressions.Parser {
 			this.output.WriteLine(stateMachine.ToReadableString());
 		}
 
-		[Fact]
-		public void RegexTokenize() {
+		[Theory]
+		[InlineData(@"")]
+		[InlineData(@"this\sis\sa\stest")]
+		public void RegexTokenize(string value) {
 			var rx = RegexLexer.Create((symbol, capture) => this.output.WriteLine("{0}({1}): {2}", symbol.ToString(RegexLexer.SymbolNameResolver), capture.Index, capture.AsString()));
-			rx.Push(@"this\sis\sa\stest".Append(Utf16Chars.EOF));
+			rx.Push(value);
+			rx.Push(Utf16Chars.EOF);
 		}
 	}
 }

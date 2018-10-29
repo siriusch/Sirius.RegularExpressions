@@ -44,9 +44,10 @@ namespace Sirius.RegularExpressions {
 		}
 
 		private void FlushPendingToken() {
-			Debug.Assert(this.tokenSymbol.HasValue);
-			this.TokenAction(this.tokenSymbol.Value, new Capture<TInput>(this.tokenStart, (int)(this.tokenEnd.Offset - this.tokenStart.Offset), this.tokenStart.Offset));
-			this.Reset(this.tokenEnd);
+			if (this.tokenSymbol.HasValue) {
+				this.TokenAction(this.tokenSymbol.Value, new Capture<TInput>(this.tokenStart, (int)(this.tokenEnd.Offset - this.tokenStart.Offset), this.tokenStart.Offset));
+				this.Reset(this.tokenEnd);
+			}
 		}
 
 		protected virtual void HandleLexicalError(bool flushing) {
@@ -59,7 +60,7 @@ namespace Sirius.RegularExpressions {
 				var newState = this.state;
 				var newSymbol = this.ProcessStateMachine(ref newState, value);
 				if (Dfa<TLetter>.IsEndState(newState)) {
-					if (this.tokenSymbol.HasValue) {
+					if (this.tokenSymbol.HasValue || newState == Dfa<TLetter>.Accept) {
 						var position = this.bufferPosition;
 						this.FlushPendingToken();
 						if (newState == Dfa<TLetter>.Accept) {
