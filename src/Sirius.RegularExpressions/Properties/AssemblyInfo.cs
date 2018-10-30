@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -37,3 +38,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
 [assembly: InternalsVisibleTo("Sirius.RegularExpressions.Tests, PublicKey=00240000048000009400000006020000002400005253413100040000010001006fc12f24826bd28cfe4846375456f31fadd07fa4bc6e2bc6adae257f84f051b02caa35aea76957253db1ef46249cfafaf9a6b567152733757f98f9ab86607f2834fa97fb2e2efab98f6d43a2d9207262d799bd370f9513abe794414f85820ffed737defdfbd84498a50717a9f7c76f77e5175ea0f5000b4f14126f1206f7eab5")]
+
+[assembly: AllowPartiallyTrustedCallers]
+[assembly: SecurityTransparent]
+[assembly: SecurityRules(SecurityRuleSet.Level2, SkipVerificationInFullTrust = true)]
