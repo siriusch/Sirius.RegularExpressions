@@ -7,7 +7,7 @@ using Sirius.RegularExpressions.Automata;
 
 namespace Sirius.RegularExpressions {
 	public static class LexerExtensions {
-		public static Expression<DfaStateMachine<LetterId, TLetter>> CreateStateMachine<TLetter>(this LexerBuilder<TLetter> that, out Id<DfaState<LetterId>> dfaStartState, RangeSet<TLetter> validRanges = null, LetterId? defaultLetter = null)
+		public static Expression<DfaStateMachine<LetterId, TLetter>> CreateStateMachine<TLetter>(this LexerBuilder<TLetter> that, out Id<DfaState<LetterId>> dfaStartState, RangeSet<TLetter>? validRanges = default, LetterId? defaultLetter = null)
 				where TLetter: struct, IEquatable<TLetter>, IComparable<TLetter> {
 			var dfa = that.ComputeDfa(out var alphabetBuilder, validRanges ?? that.ValidRange);
 			dfaStartState = dfa.StartState.Id;

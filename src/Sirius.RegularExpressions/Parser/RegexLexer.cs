@@ -68,10 +68,10 @@ namespace Sirius.RegularExpressions.Parser {
 
 		private static IReadOnlyDictionary<string, RangeSet<Codepoint>> CreateNamedSets() {
 			return new Dictionary<string, RangeSet<Codepoint>>(StringComparer.Ordinal) {
-					{"RegexChar", RangeSet<Codepoint>.Subtract(Codepoints.ValidBmp, RangeSet<Codepoint>.Union(UnicodeCharSetProvider.SpaceCharSet, new RangeSet<Codepoint>(@"|/\{}()[].+?*".ToCodepoints()), UnicodeRanges.FromUnicodeCategory(UnicodeCategory.Control), UnicodeRanges.InCombiningDiacriticalMarks))},
-					{"RegexCharset", RangeSet<Codepoint>.Subtract(Codepoints.ValidBmp, new RangeSet<Codepoint>(@"\]".ToCodepoints()))},
-					{"EscapePrintable", RangeSet<Codepoint>.Subtract(Codepoints.ValidBmp, new RangeSet<Codepoint>(@"PpxUu".ToCodepoints()))},
-					{"CharsetPrintable", RangeSet<Codepoint>.Subtract(Codepoints.ValidBmp, new RangeSet<Codepoint>(@"}".ToCodepoints()))},
+					{"RegexChar", Codepoints.ValidBmp - (UnicodeCharSetProvider.SpaceCharSet | new RangeSet<Codepoint>(@"|/\{}()[].+?*".ToCodepoints()) | UnicodeRanges.FromUnicodeCategory(UnicodeCategory.Control) | UnicodeRanges.InCombiningDiacriticalMarks)},
+					{"RegexCharset", Codepoints.ValidBmp - new RangeSet<Codepoint>(@"\]".ToCodepoints())},
+					{"EscapePrintable", Codepoints.ValidBmp - new RangeSet<Codepoint>(@"PpxUu".ToCodepoints())},
+					{"CharsetPrintable", Codepoints.ValidBmp - new RangeSet<Codepoint>(@"}".ToCodepoints())},
 					{"HexChar", new RangeSet<Codepoint>(@"0123456789AaBbCcDdEeFf".ToCodepoints())},
 					{"Digit", new RangeSet<Codepoint>(@"0123456789".ToCodepoints())}
 			};

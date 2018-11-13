@@ -16,14 +16,14 @@ namespace Sirius.RegularExpressions.Alphabet {
 			foreach (var pair in charsets) {
 				foreach (var charRange in pair.Value.Key) {
 					// split left if necessary
-					var left = ranges.BinarySearch(charRange.From);
+					var left = RangeOperations<TLetter>.BinarySearch(ranges, charRange.From);
 					var leftRange = ranges[left];
 					if (leftRange.From.CompareTo(charRange.From) < 0) {
 						ranges.Insert(left++, new UsedLetterRange<TLetter>(leftRange.From, Incrementor<TLetter>.Decrement(charRange.From), leftRange.Users));
 						ranges[left] = new UsedLetterRange<TLetter>(charRange.From, leftRange.To, leftRange.Users);
 					}
 					// split right if necessary
-					var right = ranges.BinarySearch(charRange.To);
+					var right = RangeOperations<TLetter>.BinarySearch(ranges, charRange.To);
 					var rightRange = ranges[right];
 					if (rightRange.To.CompareTo(charRange.To) > 0) {
 						ranges[right] = new UsedLetterRange<TLetter>(rightRange.From, charRange.To, rightRange.Users);
@@ -38,15 +38,14 @@ namespace Sirius.RegularExpressions.Alphabet {
 			return ranges;
 		}
 
-		public AlphabetBuilder(RxNode<TLetter> expression, TLetter? eof = null, RangeSet<TLetter> validRanges = null) {
+		public AlphabetBuilder(RxNode<TLetter> expression, TLetter? eof = null, RangeSet<TLetter>? validRanges = default) {
 			var eofRange = eof.HasValue ? new RangeSet<TLetter>(eof.Value) : RangeSet<TLetter>.Empty;
-			validRanges = RangeSet<TLetter>.Subtract(validRanges ?? RangeSet<TLetter>.All, eofRange);
 			// Step 1: Find all charset-generating regular expression parts
 			var visitor = new AlphabetBuilderVisitor<TLetter>();
 			expression.Visit(visitor, (letters, negate) => letters - eofRange);
 			var charsets = visitor.Charsets;
 			// Step 2: Get all ranges of all used charsets and register their "users"
-			var ranges = MakeRanges(charsets, validRanges);
+			var ranges = MakeRanges(charsets, (validRanges ?? RangeSet<TLetter>.All) - eofRange);
 			// Step 3: Group the information into alphabet entries
 			var alphabetByKey = ranges
 				.GroupBy<UsedLetterRange<TLetter>, string, Range<TLetter>>(r => r.GetUsersKey(), r => r.Range)
@@ -75,7 +74,7 @@ namespace Sirius.RegularExpressions.Alphabet {
 		}
 
 		public RangeSet<LetterId> Negate(RangeSet<LetterId> arg) {
-			return RangeSet<LetterId>.Subtract(new RangeSet<LetterId>(this.AlphabetById.Keys), arg);
+			return new RangeSet<LetterId>(this.AlphabetById.Keys) - arg;
 		}
 	}
 }

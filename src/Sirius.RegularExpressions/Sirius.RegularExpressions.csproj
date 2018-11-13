@@ -14,6 +14,7 @@
     <FileAlignment>512</FileAlignment>
     <KeyContainerName>SiriusKey</KeyContainerName>
     <TargetFrameworkProfile />
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -24,6 +25,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>7.1</LangVersion>
+    <DocumentationFile>bin\Debug\Sirius.RegularExpressions.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,11 +36,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>bin\Release\Sirius.RegularExpressions.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Sirius.Common, Version=1.0.9.27022, Culture=neutral, PublicKeyToken=3d58c5c8efc41aa9, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Sirius.Common.1.0.9\lib\net461\Sirius.Common.dll</HintPath>
+    <Reference Include="Sirius.Common, Version=1.0.12.22676, Culture=neutral, PublicKeyToken=3d58c5c8efc41aa9, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Sirius.Common.1.0.12\lib\net461\Sirius.Common.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -48,7 +52,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Sirius.RegularExpressions.nuspec">
       <SubType>Designer</SubType>
     </None>

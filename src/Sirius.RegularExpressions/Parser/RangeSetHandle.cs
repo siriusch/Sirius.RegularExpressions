@@ -91,7 +91,7 @@ namespace Sirius.RegularExpressions.Parser {
 			}
 
 			public bool TryGetSingle(out Codepoint ch) {
-				var set = this.Negate ? RangeSet<Codepoint>.Negate(this.Charset) : this.Charset;
+				var set = this.Negate ? ~this.Charset : this.Charset;
 				if (set.Count == 1) {
 					var range = set[0];
 					if (range.From.CompareTo(range.To) == 0) {
@@ -121,7 +121,7 @@ namespace Sirius.RegularExpressions.Parser {
 				var result = RangeSet<T>.Empty;
 				foreach (var handle in this.handles) {
 					var set = handle.GetCharSet(provider);
-					result = RangeSet<T>.Union(result, handle.Negate ? provider.Negate(set) : set);
+					result |= handle.Negate ? provider.Negate(set) : set;
 				}
 				return result;
 			}

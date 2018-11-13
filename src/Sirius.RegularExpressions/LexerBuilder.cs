@@ -48,7 +48,7 @@ namespace Sirius.RegularExpressions {
 
 		public RangeSet<TLetter> ValidRange => this.mapper.ValidLetters;
 
-		public Dfa<LetterId> ComputeDfa(out AlphabetBuilder<TLetter> alphabet, RangeSet<TLetter> validRanges = null) {
+		public Dfa<LetterId> ComputeDfa(out AlphabetBuilder<TLetter> alphabet, RangeSet<TLetter> validRanges = default) {
 			var regex = this.ComputeRx();
 			alphabet = new AlphabetBuilder<TLetter>(regex, this.eof, validRanges);
 			var nfa = NfaBuilder<LetterId>.Build(alphabet.Expression);

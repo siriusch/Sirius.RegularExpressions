@@ -12,12 +12,12 @@
 		<copyright>Copyright 2018 Sirius Technologies AG</copyright>
 		<tags>Sirius RegularExpressions</tags>
 		<dependencies>
-			<dependency id="Sirius.Common" version="1.0.8" />
+			<dependency id="Sirius.Common" version="1.0.12" />
 		</dependencies>
 	</metadata>
 	<files>
 		<file src="bin\$Configuration$\Sirius.RegularExpressions.dll" target="lib/net461"  />
 		<file src="bin\$Configuration$\Sirius.RegularExpressions.pdb" target="lib/net461" />
-		<!--file src="bin\$Configuration$\Sirius.RegularExpressions.xml" target="lib/net461" /-->
+		<file src="bin\$Configuration$\Sirius.RegularExpressions.xml" target="lib/net461" />
 	</files>
 </package>

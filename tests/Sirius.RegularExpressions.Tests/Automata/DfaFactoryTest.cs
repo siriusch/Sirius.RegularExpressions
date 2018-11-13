@@ -185,7 +185,9 @@ namespace Sirius.RegularExpressions.Automata {
 		[InlineData(@"[^a]+", false, new byte[] {65}, false)]
 		[InlineData(@"[^a]+", true, new byte[] {65}, true)]
 		public void MatchTestUtf8(string regex, bool caseSensitive, byte[] input, bool match) {
-			this.output.WriteLine(Encoding.UTF8.GetString(input));
+			var inputString = Encoding.UTF8.GetString(input);
+			this.output.WriteLine(inputString);
+			this.output.WriteLine(string.Join(" ", inputString.Select(c => ((int)c).ToString("x4"))));
 			var expression = RegexParser.Parse(regex, 0);
 			var mapper = new UnicodeUtf8Mapper(false, false);
 			var rxCodepoint = expression.ToInvariant(mapper, new UnicodeCharSetProvider(), caseSensitive);

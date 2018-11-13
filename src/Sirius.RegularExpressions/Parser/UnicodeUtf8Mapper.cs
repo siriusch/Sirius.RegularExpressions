@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 using Sirius.Collections;
@@ -25,12 +26,12 @@ namespace Sirius.RegularExpressions.Parser {
 			if ((fromH < toH) && (fromL > 0)) {
 				yield return new KeyValuePair<Range<int>, RxNode<byte>>(Range<int>.Create(fromH), new RxMatch<byte>(Range<byte>.Create(AdditionalUtf8Byte(fromL), 0x3f|0x80)));
 				fromL = 0;
-				fromH = (byte)(fromH + 1);
+				fromH++;
 			}
 			if ((fromH < toH) && (toL < 0x3f)) {
 				yield return new KeyValuePair<Range<int>, RxNode<byte>>(Range<int>.Create(toH), new RxMatch<byte>(Range<byte>.Create(0x80, AdditionalUtf8Byte(toL))));
 				toL = 0x3f;
-				toH = (byte)(toH - 1);
+				toH++;
 			}
 			yield return new KeyValuePair<Range<int>, RxNode<byte>>(Range<int>.Create(fromH, toH), new RxMatch<byte>(Range<byte>.Create(AdditionalUtf8Byte(fromL), AdditionalUtf8Byte(toL))));
 		}
@@ -63,7 +64,9 @@ namespace Sirius.RegularExpressions.Parser {
 		public override RangeSet<byte> ValidLetters => Utf8Bytes.ValidAll;
 
 		protected override IEnumerable<byte[]> GenerateCasedNormalizationLetterVariations(Grapheme grapheme, bool caseSensitive) {
-			return this.GenerateCasedNormalizationCodepointVariations(grapheme, caseSensitive).Select(c => c.ToUtf8Bytes().ToArray());
+			return this
+					.GenerateCasedNormalizationCodepointVariations(grapheme, caseSensitive)
+					.Select(c => c.ToUtf8Bytes().ToArray());
 		}
 
 		private static RangeSet<int> Intersect(RangeSet<Codepoint> codepointRanges, Range<int> intRange) {

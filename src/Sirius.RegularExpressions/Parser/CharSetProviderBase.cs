@@ -26,7 +26,7 @@ namespace Sirius.RegularExpressions.Parser {
 		}
 
 		public RangeSet<Codepoint> Negate(RangeSet<Codepoint> set) {
-			return RangeSet<Codepoint>.Intersection(Codepoints.Valid, RangeSet<Codepoint>.Negate(set));
+			return ~set & Codepoints.Valid;
 		}
 
 		public abstract RangeSet<Codepoint> GetClassSet(CharSetClass cls);

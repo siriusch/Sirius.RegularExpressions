@@ -8,7 +8,7 @@ using Sirius.Unicode;
 namespace Sirius.RegularExpressions.Parser {
 	public class UnicodeCharSetProvider: CharSetProviderBase {
 		private static readonly Lazy<RangeSet<Codepoint>> digitCharSet = new Lazy<RangeSet<Codepoint>>(() => UnicodeRanges.DecimalDigitNumber, LazyThreadSafetyMode.PublicationOnly);
-		private static readonly Lazy<RangeSet<Codepoint>> dotCharSet = new Lazy<RangeSet<Codepoint>>(() => Codepoints.Valid - '\n', LazyThreadSafetyMode.PublicationOnly);
+		private static readonly Lazy<RangeSet<Codepoint>> dotCharSet = new Lazy<RangeSet<Codepoint>>(() => Codepoints.Valid - (Codepoint)'\n', LazyThreadSafetyMode.PublicationOnly);
 		private static readonly Lazy<RangeSet<Codepoint>> spaceCharSet = new Lazy<RangeSet<Codepoint>>(() => UnicodeRanges.Separator | '\r' | '\n', LazyThreadSafetyMode.PublicationOnly);
 		private static readonly Lazy<RangeSet<Codepoint>> wordCharSet = new Lazy<RangeSet<Codepoint>>(() => '_' | UnicodeRanges.Letter | UnicodeRanges.DecimalDigitNumber, LazyThreadSafetyMode.PublicationOnly);
 

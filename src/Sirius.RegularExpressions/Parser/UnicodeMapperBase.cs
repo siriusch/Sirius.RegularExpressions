@@ -69,7 +69,8 @@ namespace Sirius.RegularExpressions.Parser {
 		protected IEnumerable<Codepoint[]> GenerateCasedNormalizationCodepointVariations(Grapheme grapheme, bool caseSensitive) {
 			return caseSensitive
 					? this.GenerateNormalizationCodepointVariations(grapheme)
-					: this.GenerateNormalizationCodepointVariations(grapheme.ToLowerInvariant()).Concat(this.GenerateNormalizationCodepointVariations(grapheme.ToUpperInvariant()));
+					: this.GenerateNormalizationCodepointVariations(grapheme.ToLowerInvariant())
+							.Concat(this.GenerateNormalizationCodepointVariations(grapheme.ToUpperInvariant()));
 		}
 
 		protected abstract IEnumerable<TLetter[]> GenerateCasedNormalizationLetterVariations(Grapheme grapheme, bool caseSensitive);

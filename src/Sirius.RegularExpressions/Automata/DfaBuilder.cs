@@ -28,7 +28,7 @@ namespace Sirius.RegularExpressions.Automata {
 				var allNfaTransitions = new RangeDictionary<TLetter, IEnumerable<NfaState<TLetter>>>();
 				foreach (var right in currentDfaState.NfaStates.Select(s => s.MatchTransitions)) {
 					var left = allNfaTransitions;
-					allNfaTransitions = new RangeDictionary<TLetter, IEnumerable<NfaState<TLetter>>>(RangeSet<TLetter>.EnumerateRanges(left.Keys, right.Keys, (rng, leftIndex, rightIndex) => {
+					allNfaTransitions = new RangeDictionary<TLetter, IEnumerable<NfaState<TLetter>>>(RangeOperations<TLetter>.EnumerateRanges(left.Keys, right.Keys, (rng, leftIndex, rightIndex) => {
 						var rangeStates = leftIndex.HasValue ? left.Values[leftIndex.Value] : Enumerable.Empty<NfaState<TLetter>>();
 						if (rightIndex.HasValue) {
 							rangeStates = rangeStates.Append(right.Values[rightIndex.Value]);
